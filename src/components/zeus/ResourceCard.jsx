@@ -17,41 +17,49 @@ function getYouTubeId(url) {
 }
 
 function tierLabel(t, isAr) {
-  if (t === "best_match") return isAr ? "الأفضل" : "Best Match";
+  if (t === "best_match") return isAr ? "ابدأ من هنا" : "Start here";
   if (t === "alternative") return isAr ? "بديل" : "Alternative";
-  if (t === "deep_dive") return isAr ? "تعمّق" : "Deep Dive";
+  if (t === "deep_dive") return isAr ? "تعمّق" : "Deep dive";
   return isAr ? "مصدر" : "Resource";
+}
+
+function hostOf(url) {
+  try { return new URL(url).hostname.replace(/^www\./, ""); } catch { return ""; }
 }
 
 export default function ResourceCard({ resource, isAr }) {
   if (!resource) return null;
   const yt = getYouTubeId(resource.url);
   const Icon = TYPE_ICON[resource.type] || BookOpen;
-  const tier = tierLabel(resource.tier, isAr);
+  const isTop = resource.rank === 1;
 
   return (
-    <div className="rounded-xl bg-secondary/30 border border-border/60 overflow-hidden hover:zeus-gold-border transition group">
-      {yt ? (
-        <div className="aspect-video bg-black/40 relative">
+    <div className={`rounded-xl overflow-hidden border transition ${isTop ? "bg-zeus-gold/5 border-zeus-gold/40" : "bg-secondary/25 border-border/60 hover:border-zeus-gold/30"}`}>
+      {yt && (
+        <div className="aspect-video bg-black/40">
           <iframe
             src={`https://www.youtube.com/embed/${yt}`}
             title={resource.title}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
+            loading="lazy"
             className="w-full h-full"
           />
         </div>
-      ) : null}
+      )}
       <div className="p-3.5">
         <div className="flex items-start gap-2.5">
-          <div className="w-9 h-9 shrink-0 rounded-lg bg-zeus-gold/15 flex items-center justify-center">
-            <Icon className="text-zeus-gold" style={{ width: 18, height: 18 }} />
+          <div className={`w-8 h-8 shrink-0 rounded-lg flex items-center justify-center font-heading font-extrabold text-sm ${isTop ? "bg-zeus-gold text-zeus-midnight" : "bg-zeus-gold/15 text-zeus-brightgold"}`}>
+            {resource.rank || <Icon style={{ width: 15, height: 15 }} />}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-medium line-clamp-2">{resource.title}</div>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-zeus-gold/15 text-zeus-brightgold font-semibold">{tier}</span>
-              <span className="text-[11px] text-muted-foreground capitalize">{resource.type}</span>
+            <div className="text-sm font-medium leading-snug line-clamp-2">{resource.title}</div>
+            {resource.why && <p className="text-[11px] text-muted-foreground mt-1 line-clamp-2">{resource.why}</p>}
+            <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${isTop ? "bg-zeus-gold text-zeus-midnight" : "bg-zeus-gold/15 text-zeus-brightgold"}`}>{tierLabel(resource.tier, isAr)}</span>
+              <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                <Icon style={{ width: 10, height: 10 }} /> {hostOf(resource.url) || resource.type}
+              </span>
             </div>
           </div>
         </div>

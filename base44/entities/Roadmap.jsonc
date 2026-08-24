@@ -52,6 +52,12 @@
                 },
                 "tier": {
                   "type": "string"
+                },
+                "rank": {
+                  "type": "number"
+                },
+                "why": {
+                  "type": "string"
                 }
               }
             }
