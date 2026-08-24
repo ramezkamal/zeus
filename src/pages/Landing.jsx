@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Sparkles, Brain, Map, BookOpen, TrendingUp, Rocket, Briefcase, Users, Zap, CheckCircle2, Quote } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
@@ -30,6 +30,10 @@ export default function Landing() {
   const nav = useNavigate();
   const isAr = lang === "ar";
   const Arrow = isAr ? ArrowLeft : ArrowRight;
+
+  useEffect(() => {
+    base44.auth.isAuthenticated().then((authed) => { if (authed) nav("/app", { replace: true }); });
+  }, [nav]);
 
   const start = async () => {
     const authed = await base44.auth.isAuthenticated();

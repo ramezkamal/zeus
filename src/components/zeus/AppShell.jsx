@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Outlet, useLocation, useNavigate, Link } from "react-router-dom";
+import { Outlet, useLocation, useNavigate, Link, Navigate } from "react-router-dom";
 import {
   Home, Sparkles, Map, BookOpen, TrendingUp, Users, Rocket, Briefcase,
   MessageSquare, Bell, User, Settings, LogOut, Menu, X
@@ -48,8 +48,7 @@ export default function AppShell() {
   }
 
   if (!profile || profile.onboarding_step !== "done") {
-    nav("/onboarding", { replace: true });
-    return null;
+    return <Navigate to="/onboarding" replace />;
   }
 
   const SidebarLink = ({ item }) => {
@@ -64,7 +63,7 @@ export default function AppShell() {
             : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
         }`}
       >
-        <Icon className={`w-4.5 h-4.5 ${active ? "text-zeus-gold" : ""}`} style={{ width: 18, height: 18 }} />
+        <Icon className={active ? "text-zeus-gold" : ""} style={{ width: 18, height: 18 }} />
         <span>{t(item.key)}</span>
       </Link>
     );

@@ -96,13 +96,15 @@ export default function Progress() {
 function Ring({ value }) {
   const r = 52, c = 2 * Math.PI * r;
   return (
-    <svg width="140" height="140" className="-rotate-90">
-      <circle cx="70" cy="70" r={r} fill="none" stroke="rgba(148,163,184,0.15)" strokeWidth="10" />
-      <circle cx="70" cy="70" r={r} fill="none" stroke="url(#g)" strokeWidth="10" strokeLinecap="round"
-        strokeDasharray={c} strokeDashoffset={c - (c * value) / 100} className="transition-all duration-700" />
-      <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#F5B700" /><stop offset="100%" stopColor="#FFD84D" /></linearGradient></defs>
-      <text x="70" y="70" textAnchor="middle" dominantBaseline="middle" className="rotate-90 fill-zeus-brightgold font-heading font-extrabold" style={{ fontSize: 28, transformOrigin: "center" }}>{value}%</text>
-    </svg>
+    <div className="relative w-[140px] h-[140px]">
+      <svg width="140" height="140" className="-rotate-90">
+        <circle cx="70" cy="70" r={r} fill="none" stroke="rgba(148,163,184,0.15)" strokeWidth="10" />
+        <circle cx="70" cy="70" r={r} fill="none" stroke="url(#g)" strokeWidth="10" strokeLinecap="round"
+          strokeDasharray={c} strokeDashoffset={c - (c * value) / 100} className="transition-all duration-700" />
+        <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#F5B700" /><stop offset="100%" stopColor="#FFD84D" /></linearGradient></defs>
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center font-heading font-extrabold text-zeus-brightgold" style={{ fontSize: 28 }}>{value}%</div>
+    </div>
   );
 }
 
