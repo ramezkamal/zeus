@@ -21,10 +21,10 @@ Current roadmap node: ${currentTask?.node_title || "N/A"}
 Current task: ${currentTask?.title || "N/A"}
 The AI companion's name is "${companionName}".`;
 
-    const convo = messages.map(m => ({ role: m.role, content: m.content }));
+    const transcript = messages.map(m => `${m.role === "user" ? "User" : companionName}: ${m.content}`).join("\n\n");
 
     const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
-      prompt: `${ZEUS_SYSTEM}\n\n${context}\n\nThe user may ask simply or vaguely. Infer what they mean from the conversation, their Learning DNA, and the current roadmap node/task — then answer helpfully and decisively. Do NOT ask them to rephrase or clarify when you can reasonably guess. If they refer to "this part / الجزء ده / المشكلة دي", infer it from the current roadmap node/task above. Reply DIRECTLY — no reintroducing yourself, no greetings. Be concise (1-3 sentences) but insightful. Reply in ${lang === "en" ? "English" : "Egyptian Arabic"}.`,
+      prompt: `${ZEUS_SYSTEM}\n\n${context}\n\n=== CONVERSATION SO FAR ===\n${transcript}\n\n=== YOUR TURN ===\nRespond to the LAST user message above. The user may ask simply or vaguely — infer what they mean from the conversation, their Learning DNA, and the current roadmap node/task, then answer helpfully and decisively. Do NOT ask them to rephrase or clarify when you can reasonably guess. If they refer to "this part / الجزء ده / المشكلة دي", infer it from the current roadmap node/task above. Reply DIRECTLY — no reintroducing yourself, no greetings, no repeating the user's question. Be concise (1-3 sentences) but insightful. Reply in ${lang === "en" ? "English" : "Egyptian Arabic"}.`,
       model: "gpt_5_mini",
       response_json_schema: {
         type: "object",

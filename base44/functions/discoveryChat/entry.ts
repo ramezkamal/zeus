@@ -13,10 +13,10 @@ export default async function(req) {
     const companionName = body.companionName || "Zeus Companion";
     const lang = body.lang || (profile.preferred_language) || "ar";
 
-    const convo = messages.map(m => ({ role: m.role, content: m.content }));
+    const transcript = messages.map(m => `${m.role === "user" ? "User" : companionName}: ${m.content}`).join("\n\n");
 
     const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
-      prompt: `${ZEUS_SYSTEM}\n\n${discoveryPrompt(companionName, lang)}`,
+      prompt: `${ZEUS_SYSTEM}\n\n${discoveryPrompt(companionName, lang, profile)}\n\n=== CONVERSATION SO FAR ===\n${transcript}\n\n=== YOUR TURN ===\nRespond to the LAST user message above. Return JSON only.`,
       model: "gpt_5_mini",
       response_json_schema: {
         type: "object",
