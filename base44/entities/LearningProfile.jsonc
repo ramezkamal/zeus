@@ -1,0 +1,169 @@
+{
+  "name": "LearningProfile",
+  "type": "object",
+  "properties": {
+    "companion_name": {
+      "type": "string",
+      "default": "Zeus Companion"
+    },
+    "onboarding_step": {
+      "type": "string",
+      "enum": [
+        "naming",
+        "discovery",
+        "dna",
+        "goal",
+        "assessment",
+        "roadmap",
+        "done"
+      ],
+      "default": "naming"
+    },
+    "goal": {
+      "type": "string"
+    },
+    "current_level": {
+      "type": "string",
+      "enum": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ]
+    },
+    "learning_style": {
+      "type": "string",
+      "enum": [
+        "visual",
+        "video",
+        "reading",
+        "hands_on",
+        "mixed"
+      ]
+    },
+    "preferred_language": {
+      "type": "string",
+      "enum": [
+        "ar",
+        "en",
+        "mixed"
+      ]
+    },
+    "depth": {
+      "type": "string",
+      "enum": [
+        "overview",
+        "balanced",
+        "deep"
+      ]
+    },
+    "weekly_hours": {
+      "type": "number"
+    },
+    "available_days": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "preferred_time": {
+      "type": "string"
+    },
+    "motivation": {
+      "type": "string"
+    },
+    "stop_triggers": {
+      "type": "string"
+    },
+    "encouragement": {
+      "type": "string"
+    },
+    "weaknesses": {
+      "type": "string"
+    },
+    "strengths": {
+      "type": "string"
+    },
+    "session_length": {
+      "type": "number"
+    },
+    "career_intent": {
+      "type": "string"
+    },
+    "deadline": {
+      "type": "string"
+    },
+    "education": {
+      "type": "string"
+    },
+    "current_role": {
+      "type": "string"
+    },
+    "experience": {
+      "type": "string"
+    },
+    "background": {
+      "type": "string"
+    },
+    "budget": {
+      "type": "string"
+    },
+    "device": {
+      "type": "string"
+    },
+    "internet": {
+      "type": "string"
+    },
+    "skill_graph": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "skill": {
+            "type": "string"
+          },
+          "level": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "goal_recommendations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "goal": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "default": "active"
+    }
+  },
+  "required": [
+    "companion_name"
+  ],
+  "rls": {
+    "read": {
+      "created_by_id": "{{user.id}}"
+    },
+    "create": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
+    }
+  }
+}
