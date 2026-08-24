@@ -17,6 +17,10 @@ const STEPS = [
   { key: "roadmap", icon: Map, labelKey: "onb.roadmap.title" }
 ];
 
+const welcomeMessage = (name, isAr) => isAr
+  ? `أهلاً 👋 أنا ${name}، هكون رفيقك في التعلّم هنا في ZEUS. قبل ما نبني أي حاجة، عايز أفهمك الأول. تحب تبدأ تقولي إنت مين وإيه اللي عايز تتعلمه؟`
+  : `Hey 👋 I'm ${name}, your learning companion at ZEUS. Before we build anything, I want to understand you first. Tell me — who you are and what you'd like to learn?`;
+
 export default function Onboarding() {
   const { t, lang, dir } = useI18n();
   const { profile, loading, createProfile, updateProfile } = useProfile();
@@ -36,11 +40,26 @@ export default function Onboarding() {
   const [building, setBuilding] = useState(false);
 
   useEffect(() => {
-    if (loading) return;
-    if (profile) {
-      setStep(profile.onboarding_step || "naming");
-      setCompanionName(profile.companion_name || "");
-      if (profile.onboarding_step === "done") nav("/app", { replace: true });
+    if (loading || !profile) return;
+    setStep(profile.onboarding_step || "naming");
+    setCompanionName(profile.companion_name || "");
+    if (profile.onboarding_step === "done") { nav("/app", { replace: true }); return; }
+    if (profile.onboarding_step === "discovery") {
+      (async () => {
+        const name = profile.companion_name || t("onb.name.default");
+        const existing = await base44.entities.Conversation.filter({ type: "discovery" }, "-created_date", 1);
+        if (existing.length) {
+          setConversation(existing[0]);
+          setMessages(existing[0].messages || []);
+        } else {
+          const convo = await base44.entities.Conversation.create({
+            type: "discovery", companion_name: name,
+            messages: [{ role: "assistant", content: welcomeMessage(name, isAr), ts: new Date().toISOString() }]
+          });
+          setConversation(convo);
+          setMessages(convo.messages);
+        }
+      })();
     }
   }, [profile, loading, nav]);
 
@@ -60,9 +79,7 @@ export default function Onboarding() {
     }
     const convo = await base44.entities.Conversation.create({
       type: "discovery", companion_name: name,
-      messages: [{ role: "assistant", content: isAr
-        ? `أهلاً 👋 أنا ${name}، هكون رفيقك في التعلّم هنا في ZEUS. قبل ما نبني أي حاجة، عايز أفهمك الأول. تحب تبدأ تقولي إنت مين وإيه اللي عايز تتعلمه؟`
-        : `Hey 👋 I'm ${name}, your learning companion at ZEUS. Before we build anything, I want to understand you first. Tell me — who you are and what you'd like to learn?`, ts: new Date().toISOString() }]
+      messages: [{ role: "assistant", content: welcomeMessage(name, isAr), ts: new Date().toISOString() }]
     });
     setConversation(convo);
     setMessages(convo.messages);
