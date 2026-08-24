@@ -3,6 +3,7 @@ import { Briefcase, Loader2, Lock, BookOpen, Rocket, FileText, Target, Award, Ar
 import { base44 } from "@/api/base44Client";
 import { useI18n } from "@/lib/i18n";
 import { useProfile } from "@/lib/ProfileContext";
+import { Link } from "react-router-dom";
 
 const LOOP_AR = ["تعلّم", "ابني", "أثبت", "استعد", "تطابق", "قدّم", "مقابلة", "اتوظف"];
 const LOOP_EN = ["Learn", "Build", "Prove", "Prepare", "Match", "Apply", "Interview", "Hired"];
@@ -65,19 +66,25 @@ export default function Career() {
           <h2 className="font-heading font-bold text-lg mb-4 flex items-center gap-2"><Target className="text-zeus-gold" style={{ width: 18, height: 18 }} /> {isAr ? "خطوات جاية" : "Next steps"}</h2>
           <div className="space-y-2.5">
             {[
-              { icon: FileText, ar: "بنّاء السيرة الذاتية (ATS)", en: "CV Builder (ATS)" },
+              { icon: FileText, ar: "بنّاء السيرة الذاتية (ATS)", en: "CV Builder (ATS)", to: "/cv-builder" },
               { icon: Briefcase, ar: "تطابق الوظائف", en: "Job Matching" },
               { icon: Rocket, ar: "تجهيز المقابلات", en: "Interview Prep" },
               { icon: BookOpen, ar: "خطاب التقديم", en: "Cover Letters" }
             ].map((s, i) => {
               const Icon = s.icon;
-              return (
-                <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-secondary/20 border border-border/60 opacity-70">
-                  <Icon className="text-muted-foreground" style={{ width: 18, height: 18 }} />
+              const inner = (
+                <>
+                  <Icon className={s.to ? "text-zeus-gold" : "text-muted-foreground"} style={{ width: 18, height: 18 }} />
                   <span className="text-sm flex-1">{isAr ? s.ar : s.en}</span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-secondary/60 text-muted-foreground flex items-center gap-1"><Lock style={{ width: 9, height: 9 }} /> {isAr ? "قريبًا" : "Soon"}</span>
-                </div>
+                  {s.to
+                    ? <span className="text-[10px] px-2 py-0.5 rounded-full bg-zeus-gold/15 text-zeus-brightgold flex items-center gap-1">{isAr ? "افتح" : "Open"}</span>
+                    : <span className="text-[10px] px-2 py-0.5 rounded-full bg-secondary/60 text-muted-foreground flex items-center gap-1"><Lock style={{ width: 9, height: 9 }} /> {isAr ? "قريبًا" : "Soon"}</span>}
+                </>
               );
+              const cls = `flex items-center gap-3 p-3 rounded-xl border transition ${s.to ? "bg-zeus-gold/5 border-zeus-gold/30 hover:zeus-gold-border" : "bg-secondary/20 border-border/60 opacity-70"}`;
+              return s.to
+                ? <Link key={i} to={s.to} className={cls}>{inner}</Link>
+                : <div key={i} className={cls}>{inner}</div>;
             })}
           </div>
         </div>

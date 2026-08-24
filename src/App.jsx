@@ -28,6 +28,7 @@ import Progress from '@/pages/Progress';
 import Community from '@/pages/Community';
 import Projects from '@/pages/Projects';
 import Career from '@/pages/Career';
+import CVBuilder from '@/pages/CVBuilder';
 import Companion from '@/pages/Companion';
 import Notifications from '@/pages/Notifications';
 import Profile from '@/pages/Profile';
@@ -72,6 +73,7 @@ const AuthenticatedApp = () => {
           <Route path="/community" element={<Community />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/career" element={<Career />} />
+          <Route path="/cv-builder" element={<CVBuilder />} />
           <Route path="/companion" element={<Companion />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/profile" element={<Profile />} />

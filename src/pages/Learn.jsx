@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Check, Clock, Loader2, Circle, CheckCircle2 } from "lucide-react";
+import { Check, Clock, Loader2, Circle, CheckCircle2, Video, BookOpen, Code, PenTool, ClipboardCheck, Download, ListTodo } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useI18n } from "@/lib/i18n";
 import { useProfile } from "@/lib/ProfileContext";
@@ -68,6 +68,9 @@ function Section({ title, tasks, onToggle, updating, isAr, accent }) {
               {updating === task.id ? <Loader2 className="animate-spin text-zeus-midnight" style={{ width: 14, height: 14 }} />
                 : task.status === "done" ? <Check className="text-zeus-midnight" style={{ width: 16, height: 16 }} /> : <Circle className="text-transparent" style={{ width: 16, height: 16 }} />}
             </button>
+            <div className="shrink-0 w-9 h-9 rounded-lg bg-zeus-gold/10 flex items-center justify-center">
+              {(() => { const TIcon = taskIcon(task.title); return <TIcon className="text-zeus-gold" style={{ width: 16, height: 16 }} />; })()}
+            </div>
             <div className="flex-1 min-w-0">
               <div className={`font-medium ${task.status === "done" ? "line-through text-muted-foreground" : ""}`}>{task.title}</div>
               <div className="text-xs text-muted-foreground mt-0.5 flex items-center gap-2 flex-wrap">
@@ -82,4 +85,15 @@ function Section({ title, tasks, onToggle, updating, isAr, accent }) {
       </div>
     </div>
   );
+}
+
+function taskIcon(title) {
+  const t = (title || "").toLowerCase();
+  if (/(شاهد|فيديو|watch|video|tutorial|شرح)/.test(t)) return Video;
+  if (/(اقرأ|قراء|كتاب|مقال|read|article|doc|وثيق)/.test(t)) return BookOpen;
+  if (/(ابن|مشروع|طبّق|كود|code|build|project|implement|اكتب)/.test(t)) return Code;
+  if (/(تدرب|تمرين|practice|exercise|solve|حل)/.test(t)) return PenTool;
+  if (/(اختبار|تست|quiz|test|امتحان)/.test(t)) return ClipboardCheck;
+  if (/(تثبيت|سطّب|install|setup|إعداد)/.test(t)) return Download;
+  return ListTodo;
 }
