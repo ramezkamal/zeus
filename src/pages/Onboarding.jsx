@@ -1,0 +1,419 @@
+import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { Sparkles, Brain, Map, Target, Gauge, Rocket, ArrowLeft, ArrowRight, Check, Loader2, Pencil } from "lucide-react";
+import { base44 } from "@/api/base44Client";
+import { useI18n } from "@/lib/i18n";
+import { useProfile } from "@/lib/ProfileContext";
+import Logo from "@/components/zeus/Logo";
+import LanguageToggle from "@/components/zeus/LanguageToggle";
+import ChatPanel from "@/components/zeus/ChatPanel";
+
+const STEPS = [
+  { key: "naming", icon: Sparkles, labelKey: "onb.discover.title" },
+  { key: "discovery", icon: Brain, labelKey: "onb.discover.title" },
+  { key: "dna", icon: Brain, labelKey: "onb.dna.title" },
+  { key: "goal", icon: Target, labelKey: "onb.goal.title" },
+  { key: "assessment", icon: Gauge, labelKey: "onb.assess.title" },
+  { key: "roadmap", icon: Map, labelKey: "onb.roadmap.title" }
+];
+
+export default function Onboarding() {
+  const { t, lang, dir } = useI18n();
+  const { profile, loading, createProfile, updateProfile } = useProfile();
+  const nav = useNavigate();
+  const isAr = lang === "ar";
+  const Arrow = isAr ? ArrowLeft : ArrowRight;
+
+  const [step, setStep] = useState("naming");
+  const [companionName, setCompanionName] = useState("");
+  const [conversation, setConversation] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [typing, setTyping] = useState(false);
+  const [recs, setRecs] = useState(null);
+  const [keySkills, setKeySkills] = useState([]);
+  const [skillLevels, setSkillLevels] = useState({});
+  const [roadmapPreview, setRoadmapPreview] = useState(null);
+  const [building, setBuilding] = useState(false);
+
+  useEffect(() => {
+    if (loading) return;
+    if (profile) {
+      setStep(profile.onboarding_step || "naming");
+      setCompanionName(profile.companion_name || "");
+      if (profile.onboarding_step === "done") nav("/app", { replace: true });
+    }
+  }, [profile, loading, nav]);
+
+  const goto = async (nextStep, patch = {}) => {
+    if (profile) await updateProfile({ onboarding_step: nextStep, ...patch });
+    setStep(nextStep);
+  };
+
+  // ---------- Naming ----------
+  const submitName = async () => {
+    const name = companionName.trim() || t("onb.name.default");
+    let p;
+    if (profile) {
+      p = await updateProfile({ companion_name: name, onboarding_step: "discovery" });
+    } else {
+      p = await createProfile({ companion_name: name, onboarding_step: "discovery" });
+    }
+    const convo = await base44.entities.Conversation.create({
+      type: "discovery", companion_name: name,
+      messages: [{ role: "assistant", content: isAr
+        ? `أهلاً 👋 أنا ${name}، هكون رفيقك في التعلّم هنا في ZEUS. قبل ما نبني أي حاجة، عايز أفهمك الأول. تحب تبدأ تقولي إنت مين وإيه اللي عايز تتعلمه؟`
+        : `Hey 👋 I'm ${name}, your learning companion at ZEUS. Before we build anything, I want to understand you first. Tell me — who you are and what you'd like to learn?`, ts: new Date().toISOString() }]
+    });
+    setConversation(convo);
+    setMessages(convo.messages);
+    setStep("discovery");
+  };
+
+  // ---------- Discovery ----------
+  const sendDiscovery = async (text) => {
+    const userMsg = { role: "user", content: text, ts: new Date().toISOString() };
+    const next = [...messages, userMsg];
+    setMessages(next);
+    setTyping(true);
+    try {
+      const res = await base44.functions.invoke("discoveryChat", {
+        messages: next.map((m) => ({ role: m.role, content: m.content })),
+        profile: profile, companionName: companionName, lang
+      });
+      const data = res.data || res;
+      const aiMsg = { role: "assistant", content: data.reply, ts: new Date().toISOString() };
+      const updated = [...next, aiMsg];
+      setMessages(updated);
+      await base44.entities.Conversation.update(conversation.id, { messages: updated });
+      if (data.isComplete && data.profile) {
+        const clean = Object.fromEntries(Object.entries(data.profile).filter(([, v]) => v !== null && v !== undefined && v !== ""));
+        await updateProfile({ ...clean, onboarding_step: "dna" });
+        setStep("dna");
+      }
+    } catch (e) {
+      setMessages([...next, { role: "assistant", content: isAr ? "حصل خطأ صغير، جرّب تاني 🙏" : "A small error occurred, please try again 🙏", ts: new Date().toISOString() }]);
+    } finally {
+      setTyping(false);
+    }
+  };
+
+  // ---------- Goal ----------
+  const loadGoals = useCallback(async () => {
+    if (recs || !profile) return;
+    setTyping(true);
+    try {
+      const res = await base44.functions.invoke("recommendGoals", { profile, goal: profile.goal, lang });
+      const data = res.data || res;
+      setRecs(data);
+      setKeySkills(data.key_skills || []);
+    } catch (e) {
+    } finally {
+      setTyping(false);
+    }
+  }, [profile, recs, lang]);
+
+  useEffect(() => { if (step === "goal") loadGoals(); }, [step, loadGoals]);
+
+  const pickGoal = async (goal) => {
+    await updateProfile({ goal, goal_recommendations: recs?.recommendations || [], onboarding_step: "assessment" });
+    setStep("assessment");
+  };
+
+  // ---------- Assessment ----------
+  const submitSkills = async () => {
+    const graph = keySkills.map((s) => ({ skill: s, level: skillLevels[s] ?? 50 }));
+    await updateProfile({ skill_graph: graph, onboarding_step: "roadmap" });
+    setStep("roadmap");
+  };
+
+  // ---------- Roadmap ----------
+  const loadRoadmap = useCallback(async () => {
+    if (roadmapPreview || !profile) return;
+    setTyping(true);
+    try {
+      const res = await base44.functions.invoke("generateRoadmap", { profile, goal: profile.goal, lang });
+      setRoadmapPreview((res.data || res));
+    } catch (e) {
+    } finally {
+      setTyping(false);
+    }
+  }, [profile, roadmapPreview, lang]);
+
+  useEffect(() => { if (step === "roadmap") loadRoadmap(); }, [step, loadRoadmap]);
+
+  const buildRoadmap = async () => {
+    setBuilding(true);
+    try {
+      const nodes = roadmapPreview?.nodes || [];
+      const roadmap = await base44.entities.Roadmap.create({ goal: profile.goal, version: 1, status: "active", nodes });
+      // create tasks for the first phase
+      const firstPhase = nodes.filter((n) => n.phase === 1);
+      const tasks = [];
+      firstPhase.forEach((node) => {
+        (node.tasks || []).forEach((taskTitle, i) => {
+          tasks.push({ title: taskTitle, node_id: node.id, node_title: node.title, status: "todo", estimated_minutes: Math.round((node.estimated_hours || 4) * 60 / Math.max(1, (node.tasks || []).length)), difficulty: "medium", order: tasks.length });
+        });
+      });
+      if (tasks.length) await base44.entities.Task.bulkCreate(tasks);
+      // welcome notification
+      await base44.entities.Notification.create({
+        type: "ai", title: isAr ? "خريطتك جاهزة! 🎉" : "Your roadmap is ready! 🎉",
+        body: isAr ? `بدأنا رحلتك نحو "${profile.goal}". أول مهامك مستنية في تبويب تعلّم.` : `Your journey toward "${profile.goal}" started. Your first tasks are waiting in Learn.`,
+        action_label: isAr ? "ابدأ" : "Start", action_url: "/learn"
+      });
+      await updateProfile({ onboarding_step: "done" });
+      nav("/app", { replace: true });
+    } catch (e) {
+    } finally {
+      setBuilding(false);
+    }
+  };
+
+  if (loading) {
+    return <div className="fixed inset-0 flex items-center justify-center"><div className="w-9 h-9 border-4 border-zeus-gold/30 border-t-zeus-gold rounded-full animate-spin" /></div>;
+  }
+
+  const stepIndex = STEPS.findIndex((s) => s.key === step);
+
+  return (
+    <div className="min-h-screen flex flex-col" dir={dir}>
+      <header className="h-16 border-b border-border/40 bg-background/70 backdrop-blur-xl flex items-center justify-between px-5">
+        <Logo size={30} />
+        <LanguageToggle />
+      </header>
+
+      {/* Step indicator */}
+      <div className="px-5 py-4 border-b border-border/40">
+        <div className="max-w-3xl mx-auto flex items-center justify-between">
+          {STEPS.map((s, i) => {
+            const Icon = s.icon;
+            const done = i < stepIndex;
+            const active = i === stepIndex;
+            return (
+              <div key={s.key} className="flex items-center flex-1 last:flex-none">
+                <div className="flex flex-col items-center gap-1.5">
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition ${
+                    active ? "bg-zeus-gold text-zeus-midnight shadow-gold scale-110" : done ? "bg-zeus-gold/20 text-zeus-brightgold" : "bg-secondary/50 text-muted-foreground"
+                  }`}>
+                    {done ? <Check style={{ width: 16, height: 16 }} /> : <Icon style={{ width: 16, height: 16 }} />}
+                  </div>
+                  <span className={`text-[10px] hidden sm:block ${active ? "text-zeus-brightgold font-medium" : "text-muted-foreground"}`}>{t(s.labelKey)}</span>
+                </div>
+                {i < STEPS.length - 1 && <div className={`flex-1 h-0.5 mx-2 ${i < stepIndex ? "bg-zeus-gold/40" : "bg-border/60"}`} />}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <main className="flex-1 flex items-center justify-center px-5 py-8">
+        <div className="w-full max-w-2xl">
+          {step === "naming" && <NamingStep name={companionName} setName={setCompanionName} onSubmit={submitName} t={t} isAr={isAr} Arrow={Arrow} />}
+          {step === "discovery" && (
+            <div className="zeus-glass p-5 h-[60vh] flex flex-col">
+              <div className="mb-3 pb-3 border-b border-border/60">
+                <div className="font-heading font-bold text-lg">{companionName || t("onb.name.default")} — {isAr ? "رفيقك في التعلّم" : "Your Learning Companion"}</div>
+                <div className="text-xs text-muted-foreground">{isAr ? "محادثة طبيعية عشان أفهمك" : "A natural conversation to understand you"}</div>
+              </div>
+              <div className="flex-1 min-h-0"><ChatPanel messages={messages} onSend={sendDiscovery} typing={typing} placeholder={isAr ? "اكتب ردك..." : "Type your reply..."} companionName={companionName} t={t} /></div>
+            </div>
+          )}
+          {step === "dna" && <DnaStep profile={profile} updateProfile={updateProfile} onContinue={() => goto("goal")} t={t} isAr={isAr} Arrow={Arrow} />}
+          {step === "goal" && <GoalStep recs={recs} typing={typing} onPick={pickGoal} t={t} isAr={isAr} />}
+          {step === "assessment" && <AssessmentStep skills={keySkills} levels={skillLevels} setLevels={setSkillLevels} onSubmit={submitSkills} t={t} isAr={isAr} Arrow={Arrow} />}
+          {step === "roadmap" && <RoadmapStep preview={roadmapPreview} typing={typing} building={building} onBuild={buildRoadmap} t={t} isAr={isAr} />}
+        </div>
+      </main>
+    </div>
+  );
+}
+
+function NamingStep({ name, setName, onSubmit, t, isAr, Arrow }) {
+  return (
+    <div className="text-center animate-fade-up">
+      <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-zeus-gold to-zeus-brightgold flex items-center justify-center mb-6 shadow-gold animate-float">
+        <Sparkles className="text-zeus-midnight" style={{ width: 36, height: 36 }} />
+      </div>
+      <p className="text-muted-foreground mb-2">{t("onb.welcome")}</p>
+      <p className="text-muted-foreground mb-6">{t("onb.before")}</p>
+      <h2 className="font-heading font-extrabold text-3xl mb-6">{t("onb.name.ask")}</h2>
+      <input
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        onKeyDown={(e) => e.key === "Enter" && onSubmit()}
+        placeholder={t("onb.name.placeholder")}
+        className="w-full max-w-md mx-auto px-5 py-4 rounded-2xl bg-card border border-border/60 focus:zeus-gold-border outline-none text-center text-lg transition block"
+        autoFocus
+      />
+      <button onClick={onSubmit} className="mt-6 inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-zeus-gold text-zeus-midnight font-semibold hover:bg-zeus-brightgold transition shadow-gold">
+        {isAr ? "يلا نبدأ" : "Let's begin"} <Arrow style={{ width: 18, height: 18 }} />
+      </button>
+    </div>
+  );
+}
+
+function DnaStep({ profile, updateProfile, onContinue, t, isAr, Arrow }) {
+  const [draft, setDraft] = useState(profile || {});
+  const fields = [
+    { key: "goal", label: isAr ? "الهدف" : "Goal" },
+    { key: "current_level", label: isAr ? "المستوى" : "Level", options: ["beginner","intermediate","advanced"], labels: isAr ? ["مبتدئ","متوسط","متقدم"] : ["Beginner","Intermediate","Advanced"] },
+    { key: "learning_style", label: isAr ? "أسلوب التعلّم" : "Learning Style", options: ["visual","video","reading","hands_on","mixed"], labels: isAr ? ["بصري","فيديو","قراءة","تطبيقي","مختلط"] : ["Visual","Video","Reading","Hands-on","Mixed"] },
+    { key: "preferred_language", label: isAr ? "اللغة المفضلة" : "Language", options: ["ar","en","mixed"], labels: isAr ? ["عربي","إنجليزي","مختلط"] : ["Arabic","English","Mixed"] },
+    { key: "depth", label: isAr ? "العمق" : "Depth", options: ["overview","balanced","deep"], labels: isAr ? ["نظرة عامة","متوازن","تعمّق"] : ["Overview","Balanced","Deep"] },
+    { key: "weekly_hours", label: isAr ? "ساعات/أسبوع" : "Hours/week", type: "number" },
+    { key: "session_length", label: isAr ? "مدة الجلسة (دقيقة)" : "Session (min)", type: "number" },
+    { key: "motivation", label: isAr ? "التحفيز" : "Motivation" },
+    { key: "strengths", label: isAr ? "نقاط القوة" : "Strengths" },
+    { key: "weaknesses", label: isAr ? "نقاط الضعف" : "Weaknesses" },
+    { key: "career_intent", label: isAr ? "النية المهنية" : "Career Intent" },
+    { key: "deadline", label: isAr ? "الموعد النهائي" : "Deadline" }
+  ];
+
+  const save = async () => { await updateProfile(draft); onContinue(); };
+
+  return (
+    <div className="animate-fade-up">
+      <div className="text-center mb-6">
+        <div className="text-zeus-gold text-sm font-semibold uppercase tracking-wider mb-1">{isAr ? "زيوس فهمك" : "ZEUS understood you"}</div>
+        <h2 className="font-heading font-extrabold text-3xl">{t("onb.dna.title")}</h2>
+        <p className="text-muted-foreground mt-2 text-sm">{isAr ? "ديه الصورة اللي بنيتها عنك. تقدر تعدّل أي حاجة قبل ما نكمّل." : "Here's the profile I built about you. Edit anything before we continue."}</p>
+      </div>
+      <div className="grid sm:grid-cols-2 gap-3">
+        {fields.map((f) => (
+          <div key={f.key} className="zeus-glass p-3">
+            <label className="text-xs text-muted-foreground block mb-1.5">{f.label}</label>
+            {f.options ? (
+              <select value={draft[f.key] || ""} onChange={(e) => setDraft({ ...draft, [f.key]: e.target.value })}
+                className="w-full bg-transparent border border-border/60 rounded-lg px-2.5 py-2 text-sm outline-none focus:zeus-gold-border">
+                <option value="">{isAr ? "اختار" : "Select"}</option>
+                {f.options.map((o, i) => <option key={o} value={o} className="bg-card">{f.labels[i]}</option>)}
+              </select>
+            ) : (
+              <input type={f.type || "text"} value={draft[f.key] ?? ""} onChange={(e) => setDraft({ ...draft, [f.key]: f.type === "number" ? Number(e.target.value) : e.target.value })}
+                className="w-full bg-transparent border border-border/60 rounded-lg px-2.5 py-2 text-sm outline-none focus:zeus-gold-border" />
+            )}
+          </div>
+        ))}
+      </div>
+      <div className="text-center mt-6">
+        <button onClick={save} className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-zeus-gold text-zeus-midnight font-semibold hover:bg-zeus-brightgold transition shadow-gold">
+          {isAr ? "كمل للتحليل" : "Continue to analysis"} <Arrow style={{ width: 18, height: 18 }} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function GoalStep({ recs, typing, onPick, t, isAr }) {
+  const [custom, setCustom] = useState("");
+  return (
+    <div className="animate-fade-up">
+      <div className="text-center mb-6">
+        <div className="text-zeus-gold text-sm font-semibold uppercase tracking-wider mb-1">{isAr ? "تحليل الأهداف" : "Goal Analysis"}</div>
+        <h2 className="font-heading font-extrabold text-3xl">{t("onb.goal.title")}</h2>
+        <p className="text-muted-foreground mt-2 text-sm">{isAr ? "زيوس حلّل مسارات ممكنة تناسبك." : "ZEUS analyzed paths that fit you."}</p>
+      </div>
+      {typing ? (
+        <div className="flex flex-col items-center gap-3 py-12">
+          <Loader2 className="text-zeus-gold animate-spin" style={{ width: 32, height: 32 }} />
+          <p className="text-muted-foreground text-sm">{isAr ? "بحلّل أفضل مسار ليك..." : "Analyzing your best path..."}</p>
+        </div>
+      ) : recs ? (
+        <div className="space-y-3">
+          {recs.recommendations?.map((r, i) => (
+            <button key={i} onClick={() => onPick(r.goal)}
+              className="w-full text-start zeus-glass p-4 hover:zeus-gold-border transition group">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="font-heading font-bold text-lg">{r.goal}</span>
+                <span className="text-zeus-gold font-bold text-xl">{r.score}%</span>
+              </div>
+              <p className="text-muted-foreground text-sm">{r.reason}</p>
+              <div className="mt-2 h-1.5 rounded-full bg-secondary/60 overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-zeus-gold to-zeus-brightgold" style={{ width: `${r.score}%` }} />
+              </div>
+            </button>
+          ))}
+          <div className="zeus-glass p-4">
+            <label className="text-xs text-muted-foreground block mb-1.5">{isAr ? "أو اكتب هدف مختلف" : "Or type a different goal"}</label>
+            <div className="flex gap-2">
+              <input value={custom} onChange={(e) => setCustom(e.target.value)} placeholder={isAr ? "اكتب هدفك" : "Your goal"}
+                className="flex-1 bg-transparent border border-border/60 rounded-lg px-3 py-2.5 text-sm outline-none focus:zeus-gold-border" />
+              <button onClick={() => custom.trim() && onPick(custom.trim())} className="px-4 rounded-lg bg-zeus-gold text-zeus-midnight font-medium text-sm">{isAr ? "تأكيد" : "Confirm"}</button>
+            </div>
+          </div>
+        </div>
+      ) : <p className="text-center text-muted-foreground">{isAr ? "حصل خطأ، حدّث الصفحة" : "Something went wrong, refresh"}</p>}
+    </div>
+  );
+}
+
+function AssessmentStep({ skills, levels, setLevels, onSubmit, t, isAr, Arrow }) {
+  return (
+    <div className="animate-fade-up">
+      <div className="text-center mb-6">
+        <div className="text-zeus-gold text-sm font-semibold uppercase tracking-wider mb-1">{isAr ? "تقييم سريع" : "Quick Assessment"}</div>
+        <h2 className="font-heading font-extrabold text-3xl">{t("onb.assess.title")}</h2>
+        <p className="text-muted-foreground mt-2 text-sm">{isAr ? "قيم مستواك في كل مهارة من 0 لـ 100." : "Rate your level in each skill from 0 to 100."}</p>
+      </div>
+      <div className="space-y-4">
+        {skills.map((s) => {
+          const v = levels[s] ?? 50;
+          return (
+            <div key={s} className="zeus-glass p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-medium">{s}</span>
+                <span className="text-zeus-gold font-bold">{v}%</span>
+              </div>
+              <input type="range" min="0" max="100" value={v}
+                onChange={(e) => setLevels({ ...levels, [s]: Number(e.target.value) })}
+                className="w-full accent-zeus-gold" />
+            </div>
+          );
+        })}
+      </div>
+      <div className="text-center mt-6">
+        <button onClick={onSubmit} className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-zeus-gold text-zeus-midnight font-semibold hover:bg-zeus-brightgold transition shadow-gold">
+          {isAr ? "ابني خريطتي" : "Build my roadmap"} <Arrow style={{ width: 18, height: 18 }} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function RoadmapStep({ preview, typing, building, onBuild, t, isAr }) {
+  const phases = preview?.nodes ? [...new Set(preview.nodes.map((n) => n.phase))].sort() : [];
+  return (
+    <div className="animate-fade-up text-center">
+      <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-zeus-gold to-zeus-brightgold flex items-center justify-center mb-6 shadow-gold animate-pop">
+        <Map className="text-zeus-midnight" style={{ width: 36, height: 36 }} />
+      </div>
+      <h2 className="font-heading font-extrabold text-3xl mb-2">{t("onb.roadmap.title")}</h2>
+      {typing ? (
+        <div className="flex flex-col items-center gap-3 py-10">
+          <Loader2 className="text-zeus-gold animate-spin" style={{ width: 32, height: 32 }} />
+          <p className="text-muted-foreground text-sm">{isAr ? "ببني خريطتك المخصصة..." : "Building your personalized roadmap..."}</p>
+        </div>
+      ) : preview ? (
+        <>
+          <p className="text-muted-foreground mb-6">{isAr ? `خريطتك فيها ${phases.length} مراحل و ${preview.nodes.length} محطة.` : `Your roadmap has ${phases.length} phases and ${preview.nodes.length} nodes.`}</p>
+          <div className="space-y-2 text-start max-h-[35vh] overflow-y-auto pe-1">
+            {phases.map((p) => (
+              <div key={p} className="zeus-glass p-3">
+                <div className="text-zeus-gold text-xs font-semibold mb-1">{isAr ? `المرحلة ${p}` : `Phase ${p}`}</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {preview.nodes.filter((n) => n.phase === p).map((n) => (
+                    <span key={n.id} className="px-2.5 py-1 rounded-full bg-secondary/40 text-xs">{n.title}</span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+          <button onClick={onBuild} disabled={building}
+            className="mt-6 inline-flex items-center gap-2 px-8 py-4 rounded-full bg-zeus-gold text-zeus-midnight font-semibold hover:bg-zeus-brightgold transition shadow-gold disabled:opacity-50">
+            {building ? <><Loader2 className="animate-spin" style={{ width: 18, height: 18 }} /> {isAr ? "بناء..." : "Building..."}</> : <><Rocket style={{ width: 18, height: 18 }} /> {t("onb.roadmap.build")}</>}
+          </button>
+        </>
+      ) : <p className="text-muted-foreground">{isAr ? "حصل خطأ، حدّث الصفحة" : "Something went wrong, refresh"}</p>}
+    </div>
+  );
+}
