@@ -68,6 +68,11 @@ export default function Onboarding() {
     setStep(nextStep);
   };
 
+  const skipToDashboard = async () => {
+    if (profile) await updateProfile({ onboarding_step: "done" });
+    nav("/app", { replace: true });
+  };
+
   // ---------- Naming ----------
   const submitName = async () => {
     const name = companionName.trim() || t("onb.name.default");
@@ -196,7 +201,12 @@ export default function Onboarding() {
     <div className="min-h-screen flex flex-col overflow-x-hidden" dir={dir}>
       <header className="h-16 border-b border-border/40 bg-background/70 backdrop-blur-xl flex items-center justify-between px-5">
         <Logo size={30} />
-        <LanguageToggle />
+        <div className="flex items-center gap-3">
+          <button onClick={skipToDashboard} className="text-xs text-muted-foreground hover:text-zeus-brightgold transition px-3 py-1.5 rounded-full border border-border/40 hover:border-zeus-gold/40">
+            {isAr ? "تخطّي للوحة التحكم" : "Skip to dashboard"}
+          </button>
+          <LanguageToggle />
+        </div>
       </header>
 
       {/* Step indicator */}
