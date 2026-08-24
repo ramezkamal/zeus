@@ -17,7 +17,7 @@ export default async function(req) {
 
     const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
       prompt: `${ZEUS_SYSTEM}\n\n${discoveryPrompt(companionName, lang)}`,
-      model: "automatic",
+      model: "gpt_5_mini",
       response_json_schema: {
         type: "object",
         properties: {

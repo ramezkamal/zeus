@@ -21,7 +21,7 @@ Reply in ${profile.preferred_language === "en" ? "English" : "Egyptian Arabic"}.
 
     const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
       prompt,
-      model: "automatic",
+      model: "gpt_5_mini",
       response_json_schema: {
         type: "object",
         properties: {
