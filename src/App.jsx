@@ -30,7 +30,6 @@ import Projects from '@/pages/Projects';
 import Career from '@/pages/Career';
 import CVBuilder from '@/pages/CVBuilder';
 import Discover from '@/pages/Discover';
-import Pitch from '@/pages/Pitch';
 import Companion from '@/pages/Companion';
 import Notifications from '@/pages/Notifications';
 import Profile from '@/pages/Profile';
@@ -63,7 +62,6 @@ const AuthenticatedApp = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
-      <Route path="/pitch" element={<Pitch />} />
 
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
         <Route path="/onboarding" element={<ProfileProvider><Onboarding /></ProfileProvider>} />
