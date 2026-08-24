@@ -24,7 +24,7 @@ The AI companion's name is "${companionName}".`;
     const convo = messages.map(m => ({ role: m.role, content: m.content }));
 
     const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
-      prompt: `${ZEUS_SYSTEM}\n\n${context}\n\nContinue the conversation. Be concise (1-4 sentences). If the user refers to "this part / الجزء ده", infer it from the current roadmap node/task above. Reply in ${lang === "en" ? "English" : "Egyptian Arabic"}.`,
+      prompt: `${ZEUS_SYSTEM}\n\n${context}\n\nContinue the conversation. Reply DIRECTLY to what the user just said — do NOT reintroduce yourself, greet, or say your name. Be concise (1-3 sentences). If the user refers to "this part / الجزء ده", infer it from the current roadmap node/task above. Reply in ${lang === "en" ? "English" : "Egyptian Arabic"}.`,
       model: "automatic",
       response_json_schema: {
         type: "object",
