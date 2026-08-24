@@ -24,7 +24,7 @@ export default function Settings() {
 
   return (
     <div dir={dir} className="space-y-6 max-w-2xl">
-      <h1 className="font-heading font-extrabold text-3xl flex items-center gap-2"><SettingsIcon className="text-zeus-gold" style={{ width: 28, height: 28 }} /> {t("nav.settings")}</h1>
+      <h1 className="font-heading font-extrabold text-2xl sm:text-3xl flex items-center gap-2"><SettingsIcon className="text-zeus-gold" style={{ width: 28, height: 28 }} /> {t("nav.settings")}</h1>
 
       <div className="zeus-glass p-6">
         <div className="flex items-center gap-2 mb-4"><Globe className="text-zeus-gold" style={{ width: 18, height: 18 }} /><h2 className="font-heading font-bold">{isAr ? "اللغة" : "Language"}</h2></div>

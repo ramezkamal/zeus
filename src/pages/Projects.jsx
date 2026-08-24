@@ -44,7 +44,7 @@ export default function Projects() {
   return (
     <div dir={dir} className="space-y-6">
       <div>
-        <h1 className="font-heading font-extrabold text-3xl flex items-center gap-2"><Rocket className="text-zeus-gold" style={{ width: 28, height: 28 }} /> {t("projects.title")}</h1>
+        <h1 className="font-heading font-extrabold text-2xl sm:text-3xl flex items-center gap-2"><Rocket className="text-zeus-gold" style={{ width: 28, height: 28 }} /> {t("projects.title")}</h1>
         <p className="text-muted-foreground mt-1">{isAr ? "مشاريع عملية تثبت مهاراتك" : "Hands-on projects that prove your skills"}</p>
       </div>
 

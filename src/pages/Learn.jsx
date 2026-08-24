@@ -44,7 +44,7 @@ export default function Learn() {
   return (
     <div dir={dir} className="space-y-6">
       <div>
-        <h1 className="font-heading font-extrabold text-3xl">{t("learn.title")}</h1>
+        <h1 className="font-heading font-extrabold text-2xl sm:text-3xl">{t("learn.title")}</h1>
         <p className="text-muted-foreground mt-1">{isAr ? `${todo.length} مهام مستنية، ${done.length} مخلّصة` : `${todo.length} pending, ${done.length} done`}</p>
       </div>
 
@@ -64,7 +64,7 @@ function Section({ title, tasks, onToggle, updating, isAr, accent }) {
           <div key={task.id} className="zeus-glass p-4 flex items-center gap-3 hover:zeus-gold-border transition">
             <button onClick={() => onToggle(task)} disabled={updating === task.id}
               className="shrink-0 w-7 h-7 rounded-full border-2 flex items-center justify-center transition"
-              style={{ borderColor: task.status === "done" ? "#F5B700" : "rgba(148,163,184,0.4)", background: task.status === "done" ? "#F5B700" : "transparent" }}>
+              style={{ borderColor: task.status === "done" ? "#FFC107" : "rgba(148,163,184,0.4)", background: task.status === "done" ? "#FFC107" : "transparent" }}>
               {updating === task.id ? <Loader2 className="animate-spin text-zeus-midnight" style={{ width: 14, height: 14 }} />
                 : task.status === "done" ? <Check className="text-zeus-midnight" style={{ width: 16, height: 16 }} /> : <Circle className="text-transparent" style={{ width: 16, height: 16 }} />}
             </button>

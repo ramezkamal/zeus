@@ -43,7 +43,7 @@ export default function Community() {
   return (
     <div dir={dir} className="space-y-6">
       <div>
-        <h1 className="font-heading font-extrabold text-3xl flex items-center gap-2"><Users className="text-zeus-gold" style={{ width: 28, height: 28 }} /> {t("nav.community")}</h1>
+        <h1 className="font-heading font-extrabold text-2xl sm:text-3xl flex items-center gap-2"><Users className="text-zeus-gold" style={{ width: 28, height: 28 }} /> {t("nav.community")}</h1>
         <p className="text-muted-foreground mt-1">{isAr ? "مجتمعات متعلّمين متلائمين مع رحلتك" : "Communities matched to your journey"}</p>
       </div>
       <div className="grid sm:grid-cols-2 gap-4">

@@ -47,7 +47,7 @@ export default function Home() {
         <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-5">
           <div>
             <div className="text-muted-foreground text-sm">{greeting} 👋</div>
-            <h1 className="font-heading font-extrabold text-3xl lg:text-4xl mt-1">
+            <h1 className="font-heading font-extrabold text-2xl sm:text-3xl lg:text-4xl mt-1">
               {(profile?.companion_name) ? `${profile.companion_name} ${isAr ? "معاك" : "is with you"}` : ""}
             </h1>
             <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-zeus-gold/10 border border-zeus-gold/30 text-zeus-brightgold text-sm">

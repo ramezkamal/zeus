@@ -26,7 +26,7 @@ export default function Roadmap() {
   return (
     <div dir={dir} className="space-y-6">
       <div>
-        <h1 className="font-heading font-extrabold text-3xl flex items-center gap-2"><Map className="text-zeus-gold" style={{ width: 28, height: 28 }} /> {t("roadmap.title")}</h1>
+        <h1 className="font-heading font-extrabold text-2xl sm:text-3xl flex items-center gap-2"><Map className="text-zeus-gold" style={{ width: 28, height: 28 }} /> {t("roadmap.title")}</h1>
         <p className="text-muted-foreground mt-1">{roadmap?.goal}</p>
       </div>
 

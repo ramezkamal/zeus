@@ -33,7 +33,7 @@ export default function Career() {
   return (
     <div dir={dir} className="space-y-6">
       <div>
-        <h1 className="font-heading font-extrabold text-3xl flex items-center gap-2"><Briefcase className="text-zeus-gold" style={{ width: 28, height: 28 }} /> {t("career.title")}</h1>
+        <h1 className="font-heading font-extrabold text-2xl sm:text-3xl flex items-center gap-2"><Briefcase className="text-zeus-gold" style={{ width: 28, height: 28 }} /> {t("career.title")}</h1>
         <p className="text-muted-foreground mt-1">{isAr ? "حوّل تعلّمك لفرصة شغل" : "Turn your learning into a career opportunity"}</p>
       </div>
 

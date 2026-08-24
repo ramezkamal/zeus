@@ -35,7 +35,7 @@ export default function Progress() {
   return (
     <div dir={dir} className="space-y-6">
       <div>
-        <h1 className="font-heading font-extrabold text-3xl">{t("progress.title")}</h1>
+        <h1 className="font-heading font-extrabold text-2xl sm:text-3xl">{t("progress.title")}</h1>
         <p className="text-muted-foreground mt-1">{profile?.goal}</p>
       </div>
 
@@ -101,7 +101,7 @@ function Ring({ value }) {
         <circle cx="70" cy="70" r={r} fill="none" stroke="rgba(148,163,184,0.15)" strokeWidth="10" />
         <circle cx="70" cy="70" r={r} fill="none" stroke="url(#g)" strokeWidth="10" strokeLinecap="round"
           strokeDasharray={c} strokeDashoffset={c - (c * value) / 100} className="transition-all duration-700" />
-        <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#F5B700" /><stop offset="100%" stopColor="#FFD84D" /></linearGradient></defs>
+        <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#FFC107" /><stop offset="100%" stopColor="#F59E0B" /></linearGradient></defs>
       </svg>
       <div className="absolute inset-0 flex items-center justify-center font-heading font-extrabold text-zeus-brightgold" style={{ fontSize: 28 }}>{value}%</div>
     </div>

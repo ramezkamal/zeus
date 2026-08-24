@@ -28,7 +28,8 @@ const NAV = [
 const BOTTOM = ["nav.home", "nav.journey", "nav.community", "nav.companion", "nav.profile"];
 
 export default function AppShell() {
-  const { t, dir } = useI18n();
+  const { t, dir, lang } = useI18n();
+  const isAr = lang === "ar";
   const { profile, loading } = useProfile();
   const loc = useLocation();
   const nav = useNavigate();
@@ -70,7 +71,7 @@ export default function AppShell() {
   };
 
   return (
-    <div className="min-h-screen flex" dir={dir}>
+    <div className="min-h-screen flex overflow-x-hidden" dir={dir}>
       {/* Sidebar */}
       <aside className="hidden lg:flex flex-col w-64 shrink-0 border-e border-border/60 bg-card/40 backdrop-blur-xl">
         <div className="px-5 py-6">
@@ -88,7 +89,7 @@ export default function AppShell() {
       </aside>
 
       {/* Main */}
-      <div className="flex-1 flex flex-col min-w-0 pb-20 lg:pb-0">
+      <div className="flex-1 flex flex-col min-w-0 pb-24 lg:pb-0">
         {/* Top bar */}
         <header className="sticky top-0 z-30 flex items-center justify-between px-4 lg:px-8 h-16 border-b border-border/60 bg-background/80 backdrop-blur-xl">
           <div className="lg:hidden"><Logo size={28} /></div>
@@ -112,12 +113,13 @@ export default function AppShell() {
       </div>
 
       {/* Bottom nav (mobile) */}
-      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 h-16 bg-card/90 backdrop-blur-xl border-t border-border/60 flex items-center justify-around px-2">
+      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-card/90 backdrop-blur-xl border-t border-border/60" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
+        <div className="flex items-center justify-around px-2 h-16">
         {NAV.filter((n) => BOTTOM.includes(n.key)).map((item) => {
           const active = loc.pathname === item.to;
           const Icon = item.icon;
           return (
-            <Link key={item.key} to={item.to} className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg text-[10px] font-medium transition ${active ? "text-zeus-brightgold" : "text-muted-foreground"}`}>
+            <Link key={item.key} to={item.to} className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg text-[10px] font-medium whitespace-nowrap transition ${active ? "text-zeus-brightgold" : "text-muted-foreground"}`}>
               <Icon style={{ width: 20, height: 20 }} className={active ? "text-zeus-gold" : ""} />
               <span>{t(item.key)}</span>
             </Link>
@@ -125,8 +127,9 @@ export default function AppShell() {
         })}
         <button onClick={() => setMoreOpen(true)} className="flex flex-col items-center gap-0.5 px-2 py-1 text-muted-foreground">
           <Menu style={{ width: 20, height: 20 }} />
-          <span className="text-[10px]">المزيد</span>
+          <span className="text-[10px]">{isAr ? "المزيد" : "More"}</span>
         </button>
+        </div>
       </nav>
 
       {/* More menu */}

@@ -176,7 +176,7 @@ export default function Onboarding() {
   const stepIndex = STEPS.findIndex((s) => s.key === step);
 
   return (
-    <div className="min-h-screen flex flex-col" dir={dir}>
+    <div className="min-h-screen flex flex-col overflow-x-hidden" dir={dir}>
       <header className="h-16 border-b border-border/40 bg-background/70 backdrop-blur-xl flex items-center justify-between px-5">
         <Logo size={30} />
         <LanguageToggle />
@@ -192,7 +192,7 @@ export default function Onboarding() {
             return (
               <div key={s.key} className="flex items-center flex-1 last:flex-none">
                 <div className="flex flex-col items-center gap-1.5">
-                  <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition ${
+                  <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-sm font-bold transition ${
                     active ? "bg-zeus-gold text-zeus-midnight shadow-gold scale-110" : done ? "bg-zeus-gold/20 text-zeus-brightgold" : "bg-secondary/50 text-muted-foreground"
                   }`}>
                     {done ? <Check style={{ width: 16, height: 16 }} /> : <Icon style={{ width: 16, height: 16 }} />}
@@ -210,7 +210,7 @@ export default function Onboarding() {
         <div className="w-full max-w-2xl">
           {step === "naming" && <NamingStep name={companionName} setName={setCompanionName} onSubmit={submitName} t={t} isAr={isAr} Arrow={Arrow} />}
           {step === "discovery" && (
-            <div className="zeus-glass p-5 h-[60vh] flex flex-col">
+            <div className="zeus-glass p-4 sm:p-5 h-[58vh] sm:h-[60vh] flex flex-col">
               <div className="mb-3 pb-3 border-b border-border/60">
                 <div className="font-heading font-bold text-lg">{companionName || t("onb.name.default")} — {isAr ? "رفيقك في التعلّم" : "Your Learning Companion"}</div>
                 <div className="text-xs text-muted-foreground">{isAr ? "محادثة طبيعية عشان أفهمك" : "A natural conversation to understand you"}</div>
@@ -236,7 +236,7 @@ function NamingStep({ name, setName, onSubmit, t, isAr, Arrow }) {
       </div>
       <p className="text-muted-foreground mb-2">{t("onb.welcome")}</p>
       <p className="text-muted-foreground mb-6">{t("onb.before")}</p>
-      <h2 className="font-heading font-extrabold text-3xl mb-6">{t("onb.name.ask")}</h2>
+      <h2 className="font-heading font-extrabold text-2xl sm:text-3xl mb-6">{t("onb.name.ask")}</h2>
       <input
         value={name}
         onChange={(e) => setName(e.target.value)}
@@ -275,7 +275,7 @@ function DnaStep({ profile, updateProfile, onContinue, t, isAr, Arrow }) {
     <div className="animate-fade-up">
       <div className="text-center mb-6">
         <div className="text-zeus-gold text-sm font-semibold uppercase tracking-wider mb-1">{isAr ? "زيوس فهمك" : "ZEUS understood you"}</div>
-        <h2 className="font-heading font-extrabold text-3xl">{t("onb.dna.title")}</h2>
+        <h2 className="font-heading font-extrabold text-2xl sm:text-3xl">{t("onb.dna.title")}</h2>
         <p className="text-muted-foreground mt-2 text-sm">{isAr ? "ديه الصورة اللي بنيتها عنك. تقدر تعدّل أي حاجة قبل ما نكمّل." : "Here's the profile I built about you. Edit anything before we continue."}</p>
       </div>
       <div className="grid sm:grid-cols-2 gap-3">
@@ -310,7 +310,7 @@ function GoalStep({ recs, typing, onPick, t, isAr }) {
     <div className="animate-fade-up">
       <div className="text-center mb-6">
         <div className="text-zeus-gold text-sm font-semibold uppercase tracking-wider mb-1">{isAr ? "تحليل الأهداف" : "Goal Analysis"}</div>
-        <h2 className="font-heading font-extrabold text-3xl">{t("onb.goal.title")}</h2>
+        <h2 className="font-heading font-extrabold text-2xl sm:text-3xl">{t("onb.goal.title")}</h2>
         <p className="text-muted-foreground mt-2 text-sm">{isAr ? "زيوس حلّل مسارات ممكنة تناسبك." : "ZEUS analyzed paths that fit you."}</p>
       </div>
       {typing ? (
@@ -352,7 +352,7 @@ function AssessmentStep({ skills, levels, setLevels, onSubmit, t, isAr, Arrow })
     <div className="animate-fade-up">
       <div className="text-center mb-6">
         <div className="text-zeus-gold text-sm font-semibold uppercase tracking-wider mb-1">{isAr ? "تقييم سريع" : "Quick Assessment"}</div>
-        <h2 className="font-heading font-extrabold text-3xl">{t("onb.assess.title")}</h2>
+        <h2 className="font-heading font-extrabold text-2xl sm:text-3xl">{t("onb.assess.title")}</h2>
         <p className="text-muted-foreground mt-2 text-sm">{isAr ? "قيم مستواك في كل مهارة من 0 لـ 100." : "Rate your level in each skill from 0 to 100."}</p>
       </div>
       <div className="space-y-4">
@@ -387,7 +387,7 @@ function RoadmapStep({ preview, typing, building, onBuild, t, isAr }) {
       <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-zeus-gold to-zeus-brightgold flex items-center justify-center mb-6 shadow-gold animate-pop">
         <Map className="text-zeus-midnight" style={{ width: 36, height: 36 }} />
       </div>
-      <h2 className="font-heading font-extrabold text-3xl mb-2">{t("onb.roadmap.title")}</h2>
+      <h2 className="font-heading font-extrabold text-2xl sm:text-3xl mb-2">{t("onb.roadmap.title")}</h2>
       {typing ? (
         <div className="flex flex-col items-center gap-3 py-10">
           <Loader2 className="text-zeus-gold animate-spin" style={{ width: 32, height: 32 }} />

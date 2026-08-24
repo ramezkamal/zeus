@@ -34,7 +34,7 @@ export default function Notifications() {
   return (
     <div dir={dir} className="space-y-5">
       <div className="flex items-center justify-between">
-        <h1 className="font-heading font-extrabold text-3xl flex items-center gap-2"><Bell className="text-zeus-gold" style={{ width: 28, height: 28 }} /> {t("notif.title")}</h1>
+        <h1 className="font-heading font-extrabold text-2xl sm:text-3xl flex items-center gap-2"><Bell className="text-zeus-gold" style={{ width: 28, height: 28 }} /> {t("notif.title")}</h1>
         {items.some((x) => !x.read) && <button onClick={markAll} className="inline-flex items-center gap-1.5 text-sm text-zeus-brightgold hover:underline"><CheckCheck style={{ width: 16, height: 16 }} /> {isAr ? "تعليم الكل كمقروء" : "Mark all read"}</button>}
       </div>
       {!items.length ? (
