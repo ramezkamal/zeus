@@ -65,6 +65,9 @@ export default function Landing() {
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-zeus-gold/30 bg-zeus-gold/10 text-zeus-brightgold text-xs font-medium mb-6">
               <Zap style={{ width: 14, height: 14 }} /> {isAr ? "رفيقك الذكي في التعلّم والمسار المهني" : "Your smart learning & career companion"}
             </div>
+            <div className="font-heading text-zeus-cloud/50 text-[11px] tracking-[0.34em] uppercase mb-6">
+              {isAr ? "مسارك. مرفوع بالذكاء الاصطناعي." : "Your Path. Elevated by AI."}
+            </div>
             <h1 className="font-heading font-extrabold text-4xl lg:text-6xl leading-[1.1] tracking-tight">
               {isAr ? (
                 <>رحلة تعلّمك. <span className="zeus-gold-text">مصمّمة حوالينك.</span></>
@@ -180,7 +183,7 @@ export default function Landing() {
             </p>
             <div className="mt-6 flex items-center gap-3">
               <div className="flex -space-x-3 rtl:space-x-reverse">
-                {["#F5B700","#FFD84D","#FFE9A3","#94A3B8"].map((c, i) => (
+                {["#FFC107","#FFD54F","#FFE9A3","#3B4A66"].map((c, i) => (
                   <div key={i} className="w-10 h-10 rounded-full border-2 border-background flex items-center justify-center text-zeus-midnight font-bold text-xs" style={{ background: c }}>{["A","M","S","K"][i]}</div>
                 ))}
               </div>
@@ -263,10 +266,10 @@ function HeroVisual({ isAr }) {
     <div className="relative aspect-[4/5] max-w-md mx-auto">
       <div className="absolute inset-0 rounded-3xl zeus-glass zeus-grid-bg overflow-hidden">
         <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <line x1="50" y1="14" x2="50" y2="26" stroke="#F5B700" strokeWidth="0.6" strokeDasharray="2 2" opacity="0.6" />
-          <line x1="50" y1="36" x2="50" y2="48" stroke="#F5B700" strokeWidth="0.6" strokeDasharray="2 2" opacity="0.6" />
-          <line x1="50" y1="58" x2="50" y2="70" stroke="#F5B700" strokeWidth="0.6" strokeDasharray="2 2" opacity="0.6" />
-          <line x1="50" y1="80" x2="50" y2="90" stroke="#F5B700" strokeWidth="0.6" strokeDasharray="2 2" opacity="0.6" />
+          <line x1="50" y1="14" x2="50" y2="26" stroke="#FFC107" strokeWidth="0.6" strokeDasharray="2 2" opacity="0.6" />
+          <line x1="50" y1="36" x2="50" y2="48" stroke="#FFC107" strokeWidth="0.6" strokeDasharray="2 2" opacity="0.6" />
+          <line x1="50" y1="58" x2="50" y2="70" stroke="#FFC107" strokeWidth="0.6" strokeDasharray="2 2" opacity="0.6" />
+          <line x1="50" y1="80" x2="50" y2="90" stroke="#FFC107" strokeWidth="0.6" strokeDasharray="2 2" opacity="0.6" />
         </svg>
         {nodes.map((n, i) => (
           <div key={i}

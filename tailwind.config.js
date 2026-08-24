@@ -24,12 +24,15 @@ module.exports = {
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
         zeus: {
-          midnight: '#0B1020',
-          darkblue: '#121A2F',
-          gold: '#F5B700',
-          brightgold: '#FFD84D',
+          midnight: '#0D1426',
+          darkblue: '#14213D',
+          navy: '#14213D',
+          steel: '#3B4A66',
+          gold: '#FFC107',
+          orange: '#F59E0B',
+          brightgold: '#FFD54F',
           softgold: '#FFE9A3',
-          cloud: '#F8FAFC',
+          cloud: '#E6E8EC',
           gray: '#94A3B8'
         },
         chart: {
