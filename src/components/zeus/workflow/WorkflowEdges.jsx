@@ -7,12 +7,12 @@ export default function WorkflowEdges({ edges, width, height, activeId }) {
     <svg width={width} height={height} className="absolute inset-0 pointer-events-none overflow-visible">
       <defs>
         <linearGradient id="zeusEdge" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="rgba(124,58,237,0.15)" />
-          <stop offset="100%" stopColor="rgba(124,58,237,0.55)" />
+          <stop offset="0%" stopColor="rgba(255,193,7,0.15)" />
+          <stop offset="100%" stopColor="rgba(255,193,7,0.55)" />
         </linearGradient>
         <linearGradient id="zeusEdgeActive" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="rgba(124,58,237,0.6)" />
-          <stop offset="100%" stopColor="rgba(221,214,254,1)" />
+          <stop offset="0%" stopColor="rgba(255,193,7,0.6)" />
+          <stop offset="100%" stopColor="rgba(255,213,79,1)" />
         </linearGradient>
       </defs>
 
@@ -33,7 +33,7 @@ export default function WorkflowEdges({ edges, width, height, activeId }) {
             {active && (
               <motion.circle
                 r={3.5}
-                fill="#DDD6FE"
+                fill="#FFD54F"
                 initial={{ offsetDistance: "0%" }}
                 animate={{ offsetDistance: "100%" }}
                 transition={{ duration: 1.6, repeat: Infinity, ease: "linear" }}

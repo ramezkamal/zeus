@@ -24,16 +24,16 @@ module.exports = {
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
         zeus: {
-          midnight: '#1E0B38',
-          darkblue: '#2E1065',
-          navy: '#2E1065',
-          steel: '#4C1D95',
-          gold: '#7C3AED',
-          orange: '#6D28D9',
-          brightgold: '#8B5CF6',
-          softgold: '#DDD6FE',
-          cloud: '#EDE9FE',
-          gray: '#AFA5D9'
+          midnight: '#0D1426',
+          darkblue: '#14213D',
+          navy: '#14213D',
+          steel: '#3B4A66',
+          gold: '#FFC107',
+          orange: '#F59E0B',
+          brightgold: '#FFD54F',
+          softgold: '#FFE9A3',
+          cloud: '#E6E8EC',
+          gray: '#94A3B8'
         },
         chart: {
           '1': 'hsl(var(--chart-1))', '2': 'hsl(var(--chart-2))', '3': 'hsl(var(--chart-3))',
@@ -57,8 +57,8 @@ module.exports = {
         mono: ['var(--font-mono)']
       },
       boxShadow: {
-        gold: '0 10px 40px -12px rgba(124, 58, 237, 0.55)',
-        'gold-sm': '0 4px 18px -8px rgba(124, 58, 237, 0.6)'
+        gold: '0 10px 40px -12px rgba(245, 183, 0, 0.45)',
+        'gold-sm': '0 4px 18px -8px rgba(245, 183, 0, 0.5)'
       },
       keyframes: {
         'accordion-down': { from: { height: '0' }, to: { height: 'var(--radix-accordion-content-height)' } },

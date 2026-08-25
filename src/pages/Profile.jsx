@@ -78,7 +78,7 @@ export default function Profile() {
           <h2 className="font-heading font-bold text-lg flex items-center gap-2"><User className="text-zeus-gold" style={{ width: 18, height: 18 }} /> {t("profile.dna")}</h2>
           {editing ? (
             <div className="flex gap-2">
-              <button onClick={save} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-zeus-gold text-white text-sm font-medium"><Check style={{ width: 14, height: 14 }} /> {t("common.save")}</button>
+              <button onClick={save} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-zeus-gold text-zeus-midnight text-sm font-medium"><Check style={{ width: 14, height: 14 }} /> {t("common.save")}</button>
               <button onClick={() => { setDraft(profile); setEditing(false); }} className="p-2 rounded-full hover:bg-secondary/60"><X style={{ width: 16, height: 16 }} /></button>
             </div>
           ) : (

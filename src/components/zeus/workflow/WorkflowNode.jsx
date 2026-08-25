@@ -26,7 +26,7 @@ export default function WorkflowNode({ node, index, active, onClick, isAr }) {
       style={{ left: node.x, top: node.y, width: NODE_W, height: NODE_H }}
     >
       <div className="flex items-start gap-2">
-        <div className={`w-7 h-7 shrink-0 rounded-lg flex items-center justify-center ${done ? "bg-zeus-gold text-white" : active ? "bg-zeus-gold/25 text-zeus-brightgold" : "bg-secondary/60 text-muted-foreground"}`}>
+        <div className={`w-7 h-7 shrink-0 rounded-lg flex items-center justify-center ${done ? "bg-zeus-gold text-zeus-midnight" : active ? "bg-zeus-gold/25 text-zeus-brightgold" : "bg-secondary/60 text-muted-foreground"}`}>
           {done ? <CheckCircle2 style={{ width: 15, height: 15 }} /> : <Lock style={{ width: 13, height: 13 }} />}
         </div>
         <div className="font-heading font-bold text-[13px] leading-snug line-clamp-2 flex-1">{node.title}</div>

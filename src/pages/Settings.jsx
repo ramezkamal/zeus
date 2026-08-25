@@ -36,7 +36,7 @@ export default function Settings() {
         <div className="flex items-center gap-2 mb-4"><MessageSquare className="text-zeus-gold" style={{ width: 18, height: 18 }} /><h2 className="font-heading font-bold">{isAr ? "اسم رفيقك الذكي" : "Companion Name"}</h2></div>
         <div className="flex gap-2">
           <input value={name} onChange={(e) => setName(e.target.value)} className="flex-1 px-4 py-3 rounded-xl bg-card border border-border/60 focus:zeus-gold-border outline-none text-sm" />
-          <button onClick={saveName} disabled={saving} className="px-5 rounded-xl bg-zeus-gold text-white font-medium text-sm hover:bg-zeus-brightgold transition disabled:opacity-50 inline-flex items-center gap-1.5">
+          <button onClick={saveName} disabled={saving} className="px-5 rounded-xl bg-zeus-gold text-zeus-midnight font-medium text-sm hover:bg-zeus-brightgold transition disabled:opacity-50 inline-flex items-center gap-1.5">
             {saving ? <Loader2 className="animate-spin" style={{ width: 16, height: 16 }} /> : <Check style={{ width: 16, height: 16 }} />} {t("common.save")}
           </button>
         </div>

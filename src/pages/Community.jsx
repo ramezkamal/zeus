@@ -63,7 +63,7 @@ export default function Community() {
               <p className="text-sm text-muted-foreground mt-2">{c.description}</p>
               <div className="mt-4 flex items-center gap-2">
                 {isMember ? (
-                  <button onClick={() => setActive(c)} className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full bg-zeus-gold text-white text-sm font-medium hover:bg-zeus-brightgold transition"><Hash style={{ width: 14, height: 14 }} /> {isAr ? "افتح الشات" : "Open chat"}</button>
+                  <button onClick={() => setActive(c)} className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full bg-zeus-gold text-zeus-midnight text-sm font-medium hover:bg-zeus-brightgold transition"><Hash style={{ width: 14, height: 14 }} /> {isAr ? "افتح الشات" : "Open chat"}</button>
                 ) : (
                   <button onClick={async () => { await base44.functions.invoke("joinCommunity", { communityId: c.id, action: "join" }); load(); }} className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full border border-zeus-gold/40 text-zeus-brightgold text-sm font-medium hover:bg-zeus-gold/10 transition">{t("community.join")} <Arrow style={{ width: 14, height: 14 }} /></button>
                 )}
@@ -125,7 +125,7 @@ function ChatRoom({ community, onBack, me, isAr, dir, t }) {
                   {!mine && <div className="w-8 h-8 shrink-0 rounded-full bg-secondary/60 flex items-center justify-center text-xs font-bold me-2 mt-0.5">{(m.user_name || "?").charAt(0).toUpperCase()}</div>}
                   <div className={`max-w-[75%]`}>
                     {!mine && <div className="text-[11px] text-muted-foreground mb-0.5">{m.user_name}</div>}
-                    <div className={`px-3.5 py-2.5 rounded-2xl text-sm ${mine ? "bg-zeus-gold text-white rounded-ee-sm" : "bg-card border border-border/60 rounded-es-sm"}`}>{m.text}</div>
+                    <div className={`px-3.5 py-2.5 rounded-2xl text-sm ${mine ? "bg-zeus-gold text-zeus-midnight rounded-ee-sm" : "bg-card border border-border/60 rounded-es-sm"}`}>{m.text}</div>
                   </div>
                 </div>
               );
@@ -134,7 +134,7 @@ function ChatRoom({ community, onBack, me, isAr, dir, t }) {
         </div>
         <form onSubmit={send} className="mt-3 flex items-center gap-2">
           <input value={text} onChange={(e) => setText(e.target.value)} placeholder={isAr ? "اكتب رسالة..." : "Type a message..."} className="flex-1 px-4 py-3 rounded-full bg-card border border-border/60 focus:zeus-gold-border outline-none text-sm" />
-          <button type="submit" className="w-11 h-11 shrink-0 rounded-full bg-zeus-gold text-white flex items-center justify-center hover:bg-zeus-brightgold transition shadow-gold-sm"><Send style={{ width: 18, height: 18 }} /></button>
+          <button type="submit" className="w-11 h-11 shrink-0 rounded-full bg-zeus-gold text-zeus-midnight flex items-center justify-center hover:bg-zeus-brightgold transition shadow-gold-sm"><Send style={{ width: 18, height: 18 }} /></button>
         </form>
       </div>
     </div>

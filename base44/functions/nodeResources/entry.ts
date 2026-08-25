@@ -40,6 +40,12 @@ HARD RULES:
 - tier: "best_match" for rank 1-2, "alternative" for rank 3-4, "deep_dive" for rank 5.
 - why: one short sentence (max 15 words) on why this resource specifically, and what the learner gets from it.
 
+QUALITY BAR:
+- Prefer well-known, reputable sources: official documentation, established YouTube educators, freeCodeCamp, MDN, W3Schools, university or free course platforms.
+- Prefer recent content (last 3 years) for fast-moving tech topics.
+- Never paywalled or login-walled content — everything must be free to access immediately.
+${lang === 'ar' ? '- Prefer a high-quality Arabic-language video when one truly exists for this exact topic; otherwise a top English resource is better than a weak Arabic one.' : ''}
+
 Write title and why in ${lang === 'ar' ? 'natural Egyptian Arabic' : 'English'}. Keep the URL untouched in its original form.`;
 
     const result = await base44.asServiceRole.integrations.Core.InvokeLLM({

@@ -32,7 +32,7 @@ export default function WorkflowCanvas({ nodes, activeId, onSelect, isAr }) {
                 className="absolute flex items-center gap-2"
                 style={{ left: c.x, top: PAD - 8, width: NODE_W }}
               >
-                <span className="w-6 h-6 rounded-lg bg-zeus-gold text-white text-[11px] font-bold flex items-center justify-center">{c.phase}</span>
+                <span className="w-6 h-6 rounded-lg bg-zeus-gold text-zeus-midnight text-[11px] font-bold flex items-center justify-center">{c.phase}</span>
                 <span className="text-[11px] font-semibold text-zeus-brightgold uppercase tracking-wider">
                   {isAr ? `مرحلة ${c.phase}` : `Phase ${c.phase}`}
                 </span>

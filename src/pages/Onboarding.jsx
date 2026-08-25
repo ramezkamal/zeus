@@ -7,6 +7,8 @@ import { useProfile } from "@/lib/ProfileContext";
 import Logo from "@/components/zeus/Logo";
 import LanguageToggle from "@/components/zeus/LanguageToggle";
 import ChatPanel from "@/components/zeus/ChatPanel";
+import DnaSummary from "@/components/zeus/onboarding/DnaSummary";
+import RoadmapReveal from "@/components/zeus/onboarding/RoadmapReveal";
 
 const STEPS = [
   { key: "naming", icon: Sparkles, labelKey: "onb.discover.title" },
@@ -220,7 +222,7 @@ export default function Onboarding() {
               <div key={s.key} className="flex items-center flex-1 last:flex-none">
                 <div className="flex flex-col items-center gap-1.5">
                   <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-sm font-bold transition ${
-                    active ? "bg-zeus-gold text-white shadow-gold scale-110" : done ? "bg-zeus-gold/20 text-zeus-brightgold" : "bg-secondary/50 text-muted-foreground"
+                    active ? "bg-zeus-gold text-zeus-midnight shadow-gold scale-110" : done ? "bg-zeus-gold/20 text-zeus-brightgold" : "bg-secondary/50 text-muted-foreground"
                   }`}>
                     {done ? <Check style={{ width: 16, height: 16 }} /> : <Icon style={{ width: 16, height: 16 }} />}
                   </div>
@@ -245,10 +247,10 @@ export default function Onboarding() {
               <div className="flex-1 min-h-0"><ChatPanel messages={messages} onSend={sendDiscovery} typing={typing} placeholder={isAr ? "اكتب ردك..." : "Type your reply..."} companionName={companionName} t={t} /></div>
             </div>
           )}
-          {step === "dna" && <DnaStep profile={profile} updateProfile={updateProfile} onContinue={() => goto("goal")} t={t} isAr={isAr} Arrow={Arrow} />}
+          {step === "dna" && <DnaSummary profile={profile} isAr={isAr} Arrow={Arrow} onConfirm={async (patch) => { await updateProfile(patch); goto("goal"); }} />}
           {step === "goal" && <GoalStep recs={recs} typing={typing} onPick={pickGoal} t={t} isAr={isAr} />}
           {step === "assessment" && <AssessmentStep skills={keySkills} levels={skillLevels} setLevels={setSkillLevels} onSubmit={submitSkills} t={t} isAr={isAr} Arrow={Arrow} />}
-          {step === "roadmap" && <RoadmapStep preview={roadmapPreview} typing={typing} building={building} onBuild={buildRoadmap} t={t} isAr={isAr} />}
+          {step === "roadmap" && <RoadmapReveal preview={roadmapPreview} typing={typing} building={building} onBuild={buildRoadmap} isAr={isAr} companionName={companionName} />}
         </div>
       </main>
     </div>
@@ -272,61 +274,9 @@ function NamingStep({ name, setName, onSubmit, t, isAr, Arrow }) {
         className="w-full max-w-md mx-auto px-5 py-4 rounded-2xl bg-card border border-border/60 focus:zeus-gold-border outline-none text-center text-lg transition block"
         autoFocus
       />
-      <button onClick={onSubmit} className="mt-6 inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-zeus-gold text-white font-semibold hover:bg-zeus-brightgold transition shadow-gold">
+      <button onClick={onSubmit} className="mt-6 inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-zeus-gold text-zeus-midnight font-semibold hover:bg-zeus-brightgold transition shadow-gold">
         {isAr ? "يلا نبدأ" : "Let's begin"} <Arrow style={{ width: 18, height: 18 }} />
       </button>
-    </div>
-  );
-}
-
-function DnaStep({ profile, updateProfile, onContinue, t, isAr, Arrow }) {
-  const [draft, setDraft] = useState(profile || {});
-  const fields = [
-    { key: "goal", label: isAr ? "الهدف" : "Goal" },
-    { key: "current_level", label: isAr ? "المستوى" : "Level", options: ["beginner","intermediate","advanced"], labels: isAr ? ["مبتدئ","متوسط","متقدم"] : ["Beginner","Intermediate","Advanced"] },
-    { key: "learning_style", label: isAr ? "أسلوب التعلّم" : "Learning Style", options: ["visual","video","reading","hands_on","mixed"], labels: isAr ? ["بصري","فيديو","قراءة","تطبيقي","مختلط"] : ["Visual","Video","Reading","Hands-on","Mixed"] },
-    { key: "preferred_language", label: isAr ? "اللغة المفضلة" : "Language", options: ["ar","en","mixed"], labels: isAr ? ["عربي","إنجليزي","مختلط"] : ["Arabic","English","Mixed"] },
-    { key: "depth", label: isAr ? "العمق" : "Depth", options: ["overview","balanced","deep"], labels: isAr ? ["نظرة عامة","متوازن","تعمّق"] : ["Overview","Balanced","Deep"] },
-    { key: "weekly_hours", label: isAr ? "ساعات/أسبوع" : "Hours/week", type: "number" },
-    { key: "session_length", label: isAr ? "مدة الجلسة (دقيقة)" : "Session (min)", type: "number" },
-    { key: "motivation", label: isAr ? "التحفيز" : "Motivation" },
-    { key: "strengths", label: isAr ? "نقاط القوة" : "Strengths" },
-    { key: "weaknesses", label: isAr ? "نقاط الضعف" : "Weaknesses" },
-    { key: "career_intent", label: isAr ? "النية المهنية" : "Career Intent" },
-    { key: "deadline", label: isAr ? "الموعد النهائي" : "Deadline" }
-  ];
-
-  const save = async () => { await updateProfile(draft); onContinue(); };
-
-  return (
-    <div className="animate-fade-up">
-      <div className="text-center mb-6">
-        <div className="text-zeus-gold text-sm font-semibold uppercase tracking-wider mb-1">{isAr ? "زيوس فهمك" : "ZEUS understood you"}</div>
-        <h2 className="font-heading font-extrabold text-2xl sm:text-3xl">{t("onb.dna.title")}</h2>
-        <p className="text-muted-foreground mt-2 text-sm">{isAr ? "ديه الصورة اللي بنيتها عنك. تقدر تعدّل أي حاجة قبل ما نكمّل." : "Here's the profile I built about you. Edit anything before we continue."}</p>
-      </div>
-      <div className="grid sm:grid-cols-2 gap-3">
-        {fields.map((f) => (
-          <div key={f.key} className="zeus-glass p-3">
-            <label className="text-xs text-muted-foreground block mb-1.5">{f.label}</label>
-            {f.options ? (
-              <select value={draft[f.key] || ""} onChange={(e) => setDraft({ ...draft, [f.key]: e.target.value })}
-                className="w-full bg-transparent border border-border/60 rounded-lg px-2.5 py-2 text-sm outline-none focus:zeus-gold-border">
-                <option value="">{isAr ? "اختار" : "Select"}</option>
-                {f.options.map((o, i) => <option key={o} value={o} className="bg-card">{f.labels[i]}</option>)}
-              </select>
-            ) : (
-              <input type={f.type || "text"} value={draft[f.key] ?? ""} onChange={(e) => setDraft({ ...draft, [f.key]: f.type === "number" ? Number(e.target.value) : e.target.value })}
-                className="w-full bg-transparent border border-border/60 rounded-lg px-2.5 py-2 text-sm outline-none focus:zeus-gold-border" />
-            )}
-          </div>
-        ))}
-      </div>
-      <div className="text-center mt-6">
-        <button onClick={save} className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-zeus-gold text-white font-semibold hover:bg-zeus-brightgold transition shadow-gold">
-          {isAr ? "كمل للتحليل" : "Continue to analysis"} <Arrow style={{ width: 18, height: 18 }} />
-        </button>
-      </div>
     </div>
   );
 }
@@ -365,7 +315,7 @@ function GoalStep({ recs, typing, onPick, t, isAr }) {
             <div className="flex gap-2">
               <input value={custom} onChange={(e) => setCustom(e.target.value)} placeholder={isAr ? "اكتب هدفك" : "Your goal"}
                 className="flex-1 bg-transparent border border-border/60 rounded-lg px-3 py-2.5 text-sm outline-none focus:zeus-gold-border" />
-              <button onClick={() => custom.trim() && onPick(custom.trim())} className="px-4 rounded-lg bg-zeus-gold text-white font-medium text-sm">{isAr ? "تأكيد" : "Confirm"}</button>
+              <button onClick={() => custom.trim() && onPick(custom.trim())} className="px-4 rounded-lg bg-zeus-gold text-zeus-midnight font-medium text-sm">{isAr ? "تأكيد" : "Confirm"}</button>
             </div>
           </div>
         </div>
@@ -399,48 +349,10 @@ function AssessmentStep({ skills, levels, setLevels, onSubmit, t, isAr, Arrow })
         })}
       </div>
       <div className="text-center mt-6">
-        <button onClick={onSubmit} className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-zeus-gold text-white font-semibold hover:bg-zeus-brightgold transition shadow-gold">
+        <button onClick={onSubmit} className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-zeus-gold text-zeus-midnight font-semibold hover:bg-zeus-brightgold transition shadow-gold">
           {isAr ? "ابني خريطتي" : "Build my roadmap"} <Arrow style={{ width: 18, height: 18 }} />
         </button>
       </div>
-    </div>
-  );
-}
-
-function RoadmapStep({ preview, typing, building, onBuild, t, isAr }) {
-  const phases = preview?.nodes ? [...new Set(preview.nodes.map((n) => n.phase))].sort() : [];
-  return (
-    <div className="animate-fade-up text-center">
-      <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-zeus-gold to-zeus-brightgold flex items-center justify-center mb-6 shadow-gold animate-pop">
-        <Map className="text-white" style={{ width: 36, height: 36 }} />
-      </div>
-      <h2 className="font-heading font-extrabold text-2xl sm:text-3xl mb-2">{t("onb.roadmap.title")}</h2>
-      {typing ? (
-        <div className="flex flex-col items-center gap-3 py-10">
-          <Loader2 className="text-zeus-gold animate-spin" style={{ width: 32, height: 32 }} />
-          <p className="text-muted-foreground text-sm">{isAr ? "ببني خريطتك المخصصة..." : "Building your personalized roadmap..."}</p>
-        </div>
-      ) : preview ? (
-        <>
-          <p className="text-muted-foreground mb-6">{isAr ? `خريطتك فيها ${phases.length} مراحل و ${preview.nodes.length} محطة.` : `Your roadmap has ${phases.length} phases and ${preview.nodes.length} nodes.`}</p>
-          <div className="space-y-2 text-start max-h-[35vh] overflow-y-auto pe-1">
-            {phases.map((p) => (
-              <div key={p} className="zeus-glass p-3">
-                <div className="text-zeus-gold text-xs font-semibold mb-1">{isAr ? `المرحلة ${p}` : `Phase ${p}`}</div>
-                <div className="flex flex-wrap gap-1.5">
-                  {preview.nodes.filter((n) => n.phase === p).map((n) => (
-                    <span key={n.id} className="px-2.5 py-1 rounded-full bg-secondary/40 text-xs">{n.title}</span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-          <button onClick={onBuild} disabled={building}
-            className="mt-6 inline-flex items-center gap-2 px-8 py-4 rounded-full bg-zeus-gold text-white font-semibold hover:bg-zeus-brightgold transition shadow-gold disabled:opacity-50">
-            {building ? <><Loader2 className="animate-spin" style={{ width: 18, height: 18 }} /> {isAr ? "بناء..." : "Building..."}</> : <><Rocket style={{ width: 18, height: 18 }} /> {t("onb.roadmap.build")}</>}
-          </button>
-        </>
-      ) : <p className="text-muted-foreground">{isAr ? "حصل خطأ، حدّث الصفحة" : "Something went wrong, refresh"}</p>}
     </div>
   );
 }

@@ -50,7 +50,7 @@ export default function Landing() {
           <Logo />
           <div className="flex items-center gap-2.5">
             <LanguageToggle />
-            <button onClick={start} className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zeus-gold text-white text-sm font-semibold hover:bg-zeus-brightgold transition shadow-gold-sm">
+            <button onClick={start} className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zeus-gold text-zeus-midnight text-sm font-semibold hover:bg-zeus-brightgold transition shadow-gold-sm">
               {t("landing.cta.start")} <Arrow style={{ width: 16, height: 16 }} />
             </button>
           </div>
@@ -79,7 +79,7 @@ export default function Landing() {
               {t("landing.hero.sub")}
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <button onClick={start} className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-zeus-gold text-white font-semibold hover:bg-zeus-brightgold transition shadow-gold">
+              <button onClick={start} className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-zeus-gold text-zeus-midnight font-semibold hover:bg-zeus-brightgold transition shadow-gold">
                 {t("landing.cta.start")} <Arrow style={{ width: 18, height: 18 }} />
               </button>
               <button onClick={() => scrollTo("how")} className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-border bg-card/50 hover:zeus-gold-border transition font-medium">
@@ -183,7 +183,7 @@ export default function Landing() {
             </p>
             <div className="mt-6 flex items-center gap-3">
               <div className="flex -space-x-3 rtl:space-x-reverse">
-                {["#7C3AED","#DDD6FE","#FFE9A3","#3B4A66"].map((c, i) => (
+                {["#FFC107","#FFD54F","#FFE9A3","#3B4A66"].map((c, i) => (
                   <div key={i} className="w-10 h-10 rounded-full border-2 border-background flex items-center justify-center text-white font-bold text-xs" style={{ background: c }}>{["A","M","S","K"][i]}</div>
                 ))}
               </div>
@@ -228,7 +228,7 @@ export default function Landing() {
           <h2 className="font-heading font-extrabold text-3xl lg:text-5xl leading-tight">
             {isAr ? <>مسارك مختلف. <span className="zeus-gold-text">خريطتك المفروض تكون كمان.</span></> : <><span className="zeus-gold-text">Your path is different.</span> Your roadmap should be too.</>}
           </h2>
-          <button onClick={start} className="mt-8 inline-flex items-center gap-2 px-8 py-4 rounded-full bg-zeus-gold text-white font-semibold hover:bg-zeus-brightgold transition shadow-gold text-lg">
+          <button onClick={start} className="mt-8 inline-flex items-center gap-2 px-8 py-4 rounded-full bg-zeus-gold text-zeus-midnight font-semibold hover:bg-zeus-brightgold transition shadow-gold text-lg">
             {t("landing.final.cta")} <Arrow style={{ width: 20, height: 20 }} />
           </button>
         </div>
@@ -266,16 +266,16 @@ function HeroVisual({ isAr }) {
     <div className="relative aspect-[4/5] max-w-md mx-auto">
       <div className="absolute inset-0 rounded-3xl zeus-glass zeus-grid-bg overflow-hidden">
         <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <line x1="50" y1="14" x2="50" y2="26" stroke="#7C3AED" strokeWidth="0.6" strokeDasharray="2 2" opacity="0.6" />
-          <line x1="50" y1="36" x2="50" y2="48" stroke="#7C3AED" strokeWidth="0.6" strokeDasharray="2 2" opacity="0.6" />
-          <line x1="50" y1="58" x2="50" y2="70" stroke="#7C3AED" strokeWidth="0.6" strokeDasharray="2 2" opacity="0.6" />
-          <line x1="50" y1="80" x2="50" y2="90" stroke="#7C3AED" strokeWidth="0.6" strokeDasharray="2 2" opacity="0.6" />
+          <line x1="50" y1="14" x2="50" y2="26" stroke="#FFC107" strokeWidth="0.6" strokeDasharray="2 2" opacity="0.6" />
+          <line x1="50" y1="36" x2="50" y2="48" stroke="#FFC107" strokeWidth="0.6" strokeDasharray="2 2" opacity="0.6" />
+          <line x1="50" y1="58" x2="50" y2="70" stroke="#FFC107" strokeWidth="0.6" strokeDasharray="2 2" opacity="0.6" />
+          <line x1="50" y1="80" x2="50" y2="90" stroke="#FFC107" strokeWidth="0.6" strokeDasharray="2 2" opacity="0.6" />
         </svg>
         {nodes.map((n, i) => (
           <div key={i}
             className="absolute -translate-x-1/2 -translate-y-1/2 animate-fade-up"
             style={{ left: `${n.x}%`, top: `${n.y}%`, animationDelay: `${i * 0.15}s` }}>
-            <div className={`px-4 py-2.5 rounded-xl border whitespace-nowrap text-sm font-medium ${n.top || n.bottom ? "bg-zeus-gold text-white border-zeus-gold shadow-gold" : "bg-card/80 border-zeus-gold/30 text-foreground"}`}>
+            <div className={`px-4 py-2.5 rounded-xl border whitespace-nowrap text-sm font-medium ${n.top || n.bottom ? "bg-zeus-gold text-zeus-midnight border-zeus-gold shadow-gold" : "bg-card/80 border-zeus-gold/30 text-foreground"}`}>
               {n.label}
             </div>
           </div>

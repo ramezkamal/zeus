@@ -1,12 +1,14 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
-import { Workflow, Loader2, Target, Network, ListTree } from "lucide-react";
+import { Workflow, Loader2, Target, Network, ListTree, CheckCircle2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useI18n } from "@/lib/i18n";
 import WorkflowCanvas from "@/components/zeus/workflow/WorkflowCanvas";
 import RoadmapTree from "@/components/zeus/RoadmapTree";
 import NodeDetail from "@/components/zeus/NodeDetail";
 import NodePanel from "@/components/zeus/NodePanel";
+
+const isReady = (n) => (n?.resources || []).some((r) => r.rank);
 
 export default function Roadmap() {
   const { t, lang, dir } = useI18n();
@@ -18,6 +20,13 @@ export default function Roadmap() {
   const [openTreeId, setOpenTreeId] = useState(null);
   const [fetchingId, setFetchingId] = useState(null);
   const [failedIds, setFailedIds] = useState([]);
+  const [prefetching, setPrefetching] = useState(false);
+
+  const roadmapRef = useRef(null);
+  roadmapRef.current = roadmap;
+  const chainRef = useRef(Promise.resolve());
+  const inFlightRef = useRef(new Set());
+  const failedRef = useRef(new Set());
 
   useEffect(() => {
     (async () => {
@@ -27,25 +36,62 @@ export default function Roadmap() {
     })();
   }, []);
 
-  const fetchResources = useCallback(async (nodeId) => {
-    if (!roadmap || fetchingId) return;
-    setFetchingId(nodeId);
-    setFailedIds((p) => p.filter((x) => x !== nodeId));
-    try {
-      const res = await base44.functions.invoke("nodeResources", { roadmapId: roadmap.id, nodeId, lang });
-      const data = res?.data || {};
-      if (data.success && Array.isArray(data.nodes)) setRoadmap((prev) => ({ ...prev, nodes: data.nodes }));
-      else setFailedIds((p) => [...p, nodeId]);
-    } catch (e) {
-      setFailedIds((p) => [...p, nodeId]);
-    }
-    setFetchingId(null);
-  }, [roadmap, fetchingId, lang]);
+  // Serialized fetch — one node at a time so results never overwrite each other
+  const doFetch = useCallback((nodeId) => {
+    if (inFlightRef.current.has(nodeId)) return chainRef.current;
+    inFlightRef.current.add(nodeId);
+    const run = chainRef.current.then(async () => {
+      const cur = roadmapRef.current;
+      const node = (cur?.nodes || []).find((n) => n.id === nodeId);
+      if (!node || isReady(node)) return;
+      setFetchingId(nodeId);
+      setFailedIds((p) => p.filter((x) => x !== nodeId));
+      try {
+        const res = await base44.functions.invoke("nodeResources", { roadmapId: cur.id, nodeId, lang });
+        const data = res?.data || {};
+        if (data.success && Array.isArray(data.nodes)) {
+          setRoadmap((prev) => ({ ...prev, nodes: data.nodes }));
+        } else {
+          failedRef.current.add(nodeId);
+          setFailedIds((p) => [...p, nodeId]);
+        }
+      } catch (e) {
+        failedRef.current.add(nodeId);
+        setFailedIds((p) => [...p, nodeId]);
+      }
+      setFetchingId(null);
+    });
+    chainRef.current = run.catch(() => {});
+    run.finally(() => inFlightRef.current.delete(nodeId));
+    return run;
+  }, [lang]);
+
+  const fetchResources = useCallback((nodeId) => {
+    failedRef.current.delete(nodeId);
+    return doFetch(nodeId);
+  }, [doFetch]);
+
+  // Background prefetch: collect resources for every node ahead of time
+  useEffect(() => {
+    if (!roadmap?.id) return;
+    let cancelled = false;
+    (async () => {
+      setPrefetching(true);
+      while (!cancelled) {
+        const cur = roadmapRef.current;
+        const next = (cur?.nodes || []).find((n) => !isReady(n) && !failedRef.current.has(n.id) && !inFlightRef.current.has(n.id));
+        if (!next) break;
+        await doFetch(next.id);
+      }
+      if (!cancelled) setPrefetching(false);
+    })();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [roadmap?.id, doFetch]);
 
   const ensureResources = (nodeId) => {
     const node = (roadmap?.nodes || []).find((n) => n.id === nodeId);
-    const verified = (node?.resources || []).some((r) => r.rank);
-    if (node && !verified && !failedIds.includes(nodeId)) fetchResources(nodeId);
+    if (node && !isReady(node) && !failedRef.current.has(nodeId)) doFetch(nodeId);
   };
 
   const selectFlow = (nodeId) => { setActiveId(nodeId); ensureResources(nodeId); };
@@ -60,7 +106,7 @@ export default function Roadmap() {
   const nodes = roadmap?.nodes || [];
   const activeNode = nodes.find((n) => n.id === activeId);
   const openTreeNode = nodes.find((n) => n.id === openTreeId);
-  const ready = nodes.filter((n) => (n.resources || []).some((r) => r.rank)).length;
+  const ready = nodes.filter(isReady).length;
 
   return (
     <div dir={dir} className="space-y-5">
@@ -84,9 +130,17 @@ export default function Roadmap() {
               <ViewTab active={view === "flow"} onClick={() => setView("flow")} icon={Network} label={isAr ? "شبكة" : "Flow"} />
               <ViewTab active={view === "list"} onClick={() => setView("list")} icon={ListTree} label={isAr ? "قائمة" : "List"} />
             </div>
-            <span className="text-[11px] text-muted-foreground">
-              {isAr ? `${nodes.length} محطة · ${ready} مصادرها جاهزة` : `${nodes.length} nodes · ${ready} resourced`}
-            </span>
+            {prefetching && ready < nodes.length ? (
+              <span className="text-[11px] text-muted-foreground flex items-center gap-1.5">
+                <Loader2 className="text-zeus-gold animate-spin" style={{ width: 12, height: 12 }} />
+                {isAr ? `بجهّز المصادر في الخلفية… ${ready}/${nodes.length}` : `Preparing resources in background… ${ready}/${nodes.length}`}
+              </span>
+            ) : (
+              <span className="text-[11px] text-muted-foreground flex items-center gap-1.5">
+                {ready === nodes.length && <CheckCircle2 className="text-zeus-gold" style={{ width: 12, height: 12 }} />}
+                {isAr ? `${nodes.length} محطة · ${ready} مصادرها جاهزة` : `${nodes.length} nodes · ${ready} resourced`}
+              </span>
+            )}
           </div>
 
           <motion.div key={view} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
@@ -98,7 +152,7 @@ export default function Roadmap() {
                   <NodeDetail
                     node={openTreeNode}
                     isAr={isAr}
-                    loading={fetchingId === openTreeNode.id}
+                    loading={fetchingId === openTreeNode.id || (!isReady(openTreeNode) && !failedIds.includes(openTreeNode.id) && prefetching)}
                     failed={failedIds.includes(openTreeNode.id)}
                     onRefresh={() => fetchResources(openTreeNode.id)}
                   />
@@ -113,7 +167,7 @@ export default function Roadmap() {
         node={view === "flow" ? activeNode : null}
         isAr={isAr}
         dir={dir}
-        loading={activeNode ? fetchingId === activeNode.id : false}
+        loading={activeNode ? (fetchingId === activeNode.id || (!isReady(activeNode) && !failedIds.includes(activeNode.id) && prefetching)) : false}
         failed={activeNode ? failedIds.includes(activeNode.id) : false}
         onRefresh={() => activeNode && fetchResources(activeNode.id)}
         onClose={() => setActiveId(null)}
@@ -125,7 +179,7 @@ export default function Roadmap() {
 function ViewTab({ active, onClick, icon: Icon, label }) {
   return (
     <button onClick={onClick}
-      className={`px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-1.5 transition ${active ? "bg-zeus-gold text-white shadow-gold" : "text-muted-foreground hover:text-foreground"}`}>
+      className={`px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-1.5 transition ${active ? "bg-zeus-gold text-zeus-midnight shadow-gold" : "text-muted-foreground hover:text-foreground"}`}>
       <Icon style={{ width: 13, height: 13 }} /> {label}
     </button>
   );
