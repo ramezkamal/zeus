@@ -85,7 +85,7 @@ export default function CVBuilder() {
             {saving ? <Loader2 className="animate-spin" style={{ width: 16, height: 16 }} /> : <Save style={{ width: 16, height: 16 }} />}
             {isAr ? "حفظ" : "Save"}
           </button>
-          <button onClick={exportPdf} disabled={exporting} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-zeus-gold to-zeus-brightgold text-zeus-midnight text-sm font-bold hover:shadow-gold transition disabled:opacity-60">
+          <button onClick={exportPdf} disabled={exporting} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-zeus-gold to-zeus-brightgold text-white text-sm font-bold hover:shadow-gold transition disabled:opacity-60">
             {exporting ? <Loader2 className="animate-spin" style={{ width: 16, height: 16 }} /> : <Download style={{ width: 16, height: 16 }} />}
             {isAr ? "تصدير PDF" : "Export PDF"}
           </button>

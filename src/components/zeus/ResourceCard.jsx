@@ -49,14 +49,14 @@ export default function ResourceCard({ resource, isAr }) {
       )}
       <div className="p-3.5">
         <div className="flex items-start gap-2.5">
-          <div className={`w-8 h-8 shrink-0 rounded-lg flex items-center justify-center font-heading font-extrabold text-sm ${isTop ? "bg-zeus-gold text-zeus-midnight" : "bg-zeus-gold/15 text-zeus-brightgold"}`}>
+          <div className={`w-8 h-8 shrink-0 rounded-lg flex items-center justify-center font-heading font-extrabold text-sm ${isTop ? "bg-zeus-gold text-white" : "bg-zeus-gold/15 text-zeus-brightgold"}`}>
             {resource.rank || <Icon style={{ width: 15, height: 15 }} />}
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-sm font-medium leading-snug line-clamp-2">{resource.title}</div>
             {resource.why && <p className="text-[11px] text-muted-foreground mt-1 line-clamp-2">{resource.why}</p>}
             <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-              <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${isTop ? "bg-zeus-gold text-zeus-midnight" : "bg-zeus-gold/15 text-zeus-brightgold"}`}>{tierLabel(resource.tier, isAr)}</span>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${isTop ? "bg-zeus-gold text-white" : "bg-zeus-gold/15 text-zeus-brightgold"}`}>{tierLabel(resource.tier, isAr)}</span>
               <span className="text-[10px] text-muted-foreground flex items-center gap-1">
                 <Icon style={{ width: 10, height: 10 }} /> {hostOf(resource.url) || resource.type}
               </span>

@@ -64,9 +64,9 @@ function Section({ title, tasks, onToggle, updating, isAr, accent }) {
           <div key={task.id} className="zeus-glass p-4 flex items-center gap-3 hover:zeus-gold-border transition">
             <button onClick={() => onToggle(task)} disabled={updating === task.id}
               className="shrink-0 w-7 h-7 rounded-full border-2 flex items-center justify-center transition"
-              style={{ borderColor: task.status === "done" ? "#FFC107" : "rgba(148,163,184,0.4)", background: task.status === "done" ? "#FFC107" : "transparent" }}>
-              {updating === task.id ? <Loader2 className="animate-spin text-zeus-midnight" style={{ width: 14, height: 14 }} />
-                : task.status === "done" ? <Check className="text-zeus-midnight" style={{ width: 16, height: 16 }} /> : <Circle className="text-transparent" style={{ width: 16, height: 16 }} />}
+              style={{ borderColor: task.status === "done" ? "#7C3AED" : "rgba(148,163,184,0.4)", background: task.status === "done" ? "#7C3AED" : "transparent" }}>
+              {updating === task.id ? <Loader2 className="animate-spin text-white" style={{ width: 14, height: 14 }} />
+                : task.status === "done" ? <Check className="text-white" style={{ width: 16, height: 16 }} /> : <Circle className="text-transparent" style={{ width: 16, height: 16 }} />}
             </button>
             <div className="shrink-0 w-9 h-9 rounded-lg bg-zeus-gold/10 flex items-center justify-center">
               {(() => { const TIcon = taskIcon(task.title); return <TIcon className="text-zeus-gold" style={{ width: 16, height: 16 }} />; })()}

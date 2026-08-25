@@ -90,7 +90,7 @@ export default function Discover() {
               <input value={custom} onChange={(e) => setCustom(e.target.value)} placeholder={isAr ? "اكتب مجال" : "Your field"}
                 className="flex-1 bg-transparent border border-border/60 rounded-lg px-3 py-2.5 text-sm outline-none focus:zeus-gold-border" />
               <button onClick={() => pickGoal(custom.trim())} disabled={!custom.trim() || !!building}
-                className="px-4 rounded-lg bg-zeus-gold text-zeus-midnight font-medium text-sm disabled:opacity-50">{isAr ? "ابدأ" : "Start"}</button>
+                className="px-4 rounded-lg bg-zeus-gold text-white font-medium text-sm disabled:opacity-50">{isAr ? "ابدأ" : "Start"}</button>
             </div>
           </div>
         </div>

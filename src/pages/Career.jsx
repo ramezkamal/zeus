@@ -44,7 +44,7 @@ export default function Career() {
         <div className="flex flex-wrap items-center justify-center gap-2">
           {(isAr ? LOOP_AR : LOOP_EN).map((s, i, arr) => (
             <React.Fragment key={i}>
-              <div className={`px-4 py-2.5 rounded-full text-sm font-medium ${i === arr.length - 1 ? "bg-zeus-gold text-zeus-midnight shadow-gold" : "bg-secondary/40 border border-border/60"}`}>{s}</div>
+              <div className={`px-4 py-2.5 rounded-full text-sm font-medium ${i === arr.length - 1 ? "bg-zeus-gold text-white shadow-gold" : "bg-secondary/40 border border-border/60"}`}>{s}</div>
               {i < arr.length - 1 && <Arrow className="text-zeus-gold/40" style={{ width: 16, height: 16 }} />}
             </React.Fragment>
           ))}

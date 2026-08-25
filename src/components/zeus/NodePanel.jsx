@@ -11,7 +11,7 @@ export default function NodePanel({ node, isAr, dir, loading, failed, onRefresh,
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-zeus-midnight/70 backdrop-blur-sm"
+            className="absolute inset-0 bg-background/70 backdrop-blur-sm"
           />
           <motion.div
             initial={{ x: isAr ? "-100%" : "100%" }}

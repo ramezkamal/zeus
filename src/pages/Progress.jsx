@@ -101,7 +101,7 @@ function Ring({ value }) {
         <circle cx="70" cy="70" r={r} fill="none" stroke="rgba(148,163,184,0.15)" strokeWidth="10" />
         <circle cx="70" cy="70" r={r} fill="none" stroke="url(#g)" strokeWidth="10" strokeLinecap="round"
           strokeDasharray={c} strokeDashoffset={c - (c * value) / 100} className="transition-all duration-700" />
-        <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#FFC107" /><stop offset="100%" stopColor="#F59E0B" /></linearGradient></defs>
+        <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#7C3AED" /><stop offset="100%" stopColor="#A78BFA" /></linearGradient></defs>
       </svg>
       <div className="absolute inset-0 flex items-center justify-center font-heading font-extrabold text-zeus-brightgold" style={{ fontSize: 28 }}>{value}%</div>
     </div>

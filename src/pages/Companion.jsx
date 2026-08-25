@@ -67,7 +67,7 @@ export default function Companion() {
   return (
     <div dir={dir} className="space-y-4">
       <div className="flex items-center gap-3">
-        <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-zeus-gold to-zeus-brightgold flex items-center justify-center"><MessageSquare className="text-zeus-midnight" style={{ width: 22, height: 22 }} /></div>
+        <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-zeus-gold to-zeus-brightgold flex items-center justify-center"><MessageSquare className="text-white" style={{ width: 22, height: 22 }} /></div>
         <div>
           <h1 className="font-heading font-extrabold text-2xl">{profile?.companion_name || "ZEUS"}</h1>
           <p className="text-xs text-muted-foreground">{isAr ? "رفيقك في التعلّم — فاهم خريطتك ومهامك" : "Your learning companion — knows your roadmap & tasks"}</p>

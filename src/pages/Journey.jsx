@@ -59,7 +59,7 @@ export default function Journey() {
             return (
               <div key={p} className="relative flex gap-4 animate-fade-up" style={{ animationDelay: `${i * 0.08}s` }}>
                 <div className={`relative z-10 w-10 h-10 shrink-0 rounded-full flex items-center justify-center border-2 ${complete ? "bg-zeus-gold border-zeus-gold" : inProgress ? "bg-zeus-gold/20 border-zeus-gold" : "bg-card border-border"}`}>
-                  {complete ? <CheckCircle2 className="text-zeus-midnight" style={{ width: 20, height: 20 }} /> : <Circle className={inProgress ? "text-zeus-gold" : "text-muted-foreground/40"} style={{ width: 20, height: 20 }} />}
+                  {complete ? <CheckCircle2 className="text-white" style={{ width: 20, height: 20 }} /> : <Circle className={inProgress ? "text-zeus-gold" : "text-muted-foreground/40"} style={{ width: 20, height: 20 }} />}
                 </div>
                 <div className="flex-1 zeus-glass p-4 mb-2">
                   <div className="flex items-center justify-between">

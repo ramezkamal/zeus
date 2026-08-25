@@ -1,42 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Geist:wght@300;400;500;600;700&family=Cairo:wght@400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 220 49% 10%;
-    --foreground: 220 15% 91%;
-    --card: 220 51% 16%;
-    --card-foreground: 220 15% 91%;
-    --popover: 220 51% 13%;
-    --popover-foreground: 220 15% 91%;
-    --primary: 45 100% 51%;
-    --primary-foreground: 220 49% 10%;
-    --secondary: 216 27% 32%;
-    --secondary-foreground: 220 15% 91%;
-    --muted: 220 30% 20%;
-    --muted-foreground: 216 18% 62%;
-    --accent: 35 92% 50%;
-    --accent-foreground: 220 49% 10%;
+    --background: 262 66% 10%;
+    --foreground: 251 91% 95%;
+    --card: 261 73% 23%;
+    --card-foreground: 251 91% 95%;
+    --popover: 261 73% 18%;
+    --popover-foreground: 251 91% 95%;
+    --primary: 262 83% 58%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 263 67% 35%;
+    --secondary-foreground: 251 91% 95%;
+    --muted: 262 50% 20%;
+    --muted-foreground: 251 45% 78%;
+    --accent: 251 95% 92%;
+    --accent-foreground: 261 73% 23%;
     --destructive: 0 72% 51%;
-    --destructive-foreground: 220 15% 91%;
-    --border: 216 27% 24%;
-    --input: 216 27% 26%;
-    --ring: 45 100% 51%;
+    --destructive-foreground: 251 91% 95%;
+    --border: 262 45% 32%;
+    --input: 262 45% 34%;
+    --ring: 262 83% 58%;
     --radius: 0.75rem;
-    --font-heading: "SORA", "Cairo", ui-sans-serif, system-ui, sans-serif;
-    --font-body: "Inter", "Cairo", ui-sans-serif, system-ui, sans-serif;
-    --font-display: "SORA", "Cairo", ui-sans-serif, system-ui, sans-serif;
+    --font-heading: "Space Grotesk", "Cairo", ui-sans-serif, system-ui, sans-serif;
+    --font-body: "Geist", "Cairo", ui-sans-serif, system-ui, sans-serif;
+    --font-display: "Space Grotesk", "Cairo", ui-sans-serif, system-ui, sans-serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-    --zeus-midnight: 220 49% 10%;
-    --zeus-navy: 220 51% 16%;
-    --zeus-steel: 216 27% 32%;
-    --zeus-gold: 45 100% 51%;
-    --zeus-orange: 35 92% 50%;
-    --zeus-brightgold: 46 100% 62%;
-    --zeus-softgold: 48 100% 80%;
-    --zeus-cloud: 220 15% 91%;
+    --zeus-midnight: 262 66% 10%;
+    --zeus-navy: 261 73% 23%;
+    --zeus-steel: 263 67% 35%;
+    --zeus-gold: 262 83% 58%;
+    --zeus-orange: 262 68% 45%;
+    --zeus-brightgold: 258 90% 66%;
+    --zeus-softgold: 251 95% 92%;
+    --zeus-cloud: 251 91% 95%;
   }
 }
 
@@ -48,12 +50,12 @@
   body {
     @apply bg-background text-foreground font-body antialiased;
     background-image:
-      radial-gradient(60rem 60rem at 80% -10%, rgba(255, 193, 7, 0.08), transparent 60%),
-      radial-gradient(50rem 50rem at -10% 10%, rgba(20, 33, 61, 0.6), transparent 50%);
+      radial-gradient(60rem 60rem at 80% -10%, rgba(124, 58, 237, 0.10), transparent 60%),
+      radial-gradient(50rem 50rem at -10% 10%, rgba(46, 16, 101, 0.6), transparent 50%);
     background-attachment: fixed;
   }
   h1, h2, h3, h4, h5 { @apply font-heading; }
-  ::selection { background: rgba(255, 193, 7, 0.3); color: #fff; }
+  ::selection { background: rgba(124, 58, 237, 0.4); color: #fff; }
 }
 
 @layer components {
@@ -61,19 +63,19 @@
     @apply bg-card/60 backdrop-blur-xl border border-border/70 rounded-2xl;
   }
   .zeus-gold-text {
-    background: linear-gradient(135deg, #FFD54F 0%, #FFC107 55%, #F59E0B 100%);
+    background: linear-gradient(135deg, #EDE9FE 0%, #DDD6FE 45%, #A78BFA 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
   .zeus-gold-border {
-    border: 1px solid rgba(255, 193, 7, 0.35);
-    box-shadow: 0 0 0 1px rgba(255, 193, 7, 0.08), 0 8px 30px -12px rgba(255, 193, 7, 0.25);
+    border: 1px solid rgba(124, 58, 237, 0.45);
+    box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.1), 0 8px 30px -12px rgba(124, 58, 237, 0.35);
   }
   .zeus-grid-bg {
     background-image:
-      linear-gradient(rgba(255, 193, 7, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 193, 7, 0.05) 1px, transparent 1px);
+      linear-gradient(rgba(124, 58, 237, 0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124, 58, 237, 0.07) 1px, transparent 1px);
     background-size: 44px 44px;
   }
 }
@@ -97,5 +99,5 @@
 /* Scrollbar */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255, 193, 7, 0.25); border-radius: 999px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255, 193, 7, 0.4); }
+::-webkit-scrollbar-thumb { background: rgba(124, 58, 237, 0.35); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(124, 58, 237, 0.55); }

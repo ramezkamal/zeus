@@ -220,7 +220,7 @@ export default function Onboarding() {
               <div key={s.key} className="flex items-center flex-1 last:flex-none">
                 <div className="flex flex-col items-center gap-1.5">
                   <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-sm font-bold transition ${
-                    active ? "bg-zeus-gold text-zeus-midnight shadow-gold scale-110" : done ? "bg-zeus-gold/20 text-zeus-brightgold" : "bg-secondary/50 text-muted-foreground"
+                    active ? "bg-zeus-gold text-white shadow-gold scale-110" : done ? "bg-zeus-gold/20 text-zeus-brightgold" : "bg-secondary/50 text-muted-foreground"
                   }`}>
                     {done ? <Check style={{ width: 16, height: 16 }} /> : <Icon style={{ width: 16, height: 16 }} />}
                   </div>
@@ -259,7 +259,7 @@ function NamingStep({ name, setName, onSubmit, t, isAr, Arrow }) {
   return (
     <div className="text-center animate-fade-up">
       <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-zeus-gold to-zeus-brightgold flex items-center justify-center mb-6 shadow-gold animate-float">
-        <Sparkles className="text-zeus-midnight" style={{ width: 36, height: 36 }} />
+        <Sparkles className="text-white" style={{ width: 36, height: 36 }} />
       </div>
       <p className="text-muted-foreground mb-2">{t("onb.welcome")}</p>
       <p className="text-muted-foreground mb-6">{t("onb.before")}</p>
@@ -272,7 +272,7 @@ function NamingStep({ name, setName, onSubmit, t, isAr, Arrow }) {
         className="w-full max-w-md mx-auto px-5 py-4 rounded-2xl bg-card border border-border/60 focus:zeus-gold-border outline-none text-center text-lg transition block"
         autoFocus
       />
-      <button onClick={onSubmit} className="mt-6 inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-zeus-gold text-zeus-midnight font-semibold hover:bg-zeus-brightgold transition shadow-gold">
+      <button onClick={onSubmit} className="mt-6 inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-zeus-gold text-white font-semibold hover:bg-zeus-brightgold transition shadow-gold">
         {isAr ? "يلا نبدأ" : "Let's begin"} <Arrow style={{ width: 18, height: 18 }} />
       </button>
     </div>
@@ -323,7 +323,7 @@ function DnaStep({ profile, updateProfile, onContinue, t, isAr, Arrow }) {
         ))}
       </div>
       <div className="text-center mt-6">
-        <button onClick={save} className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-zeus-gold text-zeus-midnight font-semibold hover:bg-zeus-brightgold transition shadow-gold">
+        <button onClick={save} className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-zeus-gold text-white font-semibold hover:bg-zeus-brightgold transition shadow-gold">
           {isAr ? "كمل للتحليل" : "Continue to analysis"} <Arrow style={{ width: 18, height: 18 }} />
         </button>
       </div>
@@ -365,7 +365,7 @@ function GoalStep({ recs, typing, onPick, t, isAr }) {
             <div className="flex gap-2">
               <input value={custom} onChange={(e) => setCustom(e.target.value)} placeholder={isAr ? "اكتب هدفك" : "Your goal"}
                 className="flex-1 bg-transparent border border-border/60 rounded-lg px-3 py-2.5 text-sm outline-none focus:zeus-gold-border" />
-              <button onClick={() => custom.trim() && onPick(custom.trim())} className="px-4 rounded-lg bg-zeus-gold text-zeus-midnight font-medium text-sm">{isAr ? "تأكيد" : "Confirm"}</button>
+              <button onClick={() => custom.trim() && onPick(custom.trim())} className="px-4 rounded-lg bg-zeus-gold text-white font-medium text-sm">{isAr ? "تأكيد" : "Confirm"}</button>
             </div>
           </div>
         </div>
@@ -399,7 +399,7 @@ function AssessmentStep({ skills, levels, setLevels, onSubmit, t, isAr, Arrow })
         })}
       </div>
       <div className="text-center mt-6">
-        <button onClick={onSubmit} className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-zeus-gold text-zeus-midnight font-semibold hover:bg-zeus-brightgold transition shadow-gold">
+        <button onClick={onSubmit} className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-zeus-gold text-white font-semibold hover:bg-zeus-brightgold transition shadow-gold">
           {isAr ? "ابني خريطتي" : "Build my roadmap"} <Arrow style={{ width: 18, height: 18 }} />
         </button>
       </div>
@@ -412,7 +412,7 @@ function RoadmapStep({ preview, typing, building, onBuild, t, isAr }) {
   return (
     <div className="animate-fade-up text-center">
       <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-zeus-gold to-zeus-brightgold flex items-center justify-center mb-6 shadow-gold animate-pop">
-        <Map className="text-zeus-midnight" style={{ width: 36, height: 36 }} />
+        <Map className="text-white" style={{ width: 36, height: 36 }} />
       </div>
       <h2 className="font-heading font-extrabold text-2xl sm:text-3xl mb-2">{t("onb.roadmap.title")}</h2>
       {typing ? (
@@ -436,7 +436,7 @@ function RoadmapStep({ preview, typing, building, onBuild, t, isAr }) {
             ))}
           </div>
           <button onClick={onBuild} disabled={building}
-            className="mt-6 inline-flex items-center gap-2 px-8 py-4 rounded-full bg-zeus-gold text-zeus-midnight font-semibold hover:bg-zeus-brightgold transition shadow-gold disabled:opacity-50">
+            className="mt-6 inline-flex items-center gap-2 px-8 py-4 rounded-full bg-zeus-gold text-white font-semibold hover:bg-zeus-brightgold transition shadow-gold disabled:opacity-50">
             {building ? <><Loader2 className="animate-spin" style={{ width: 18, height: 18 }} /> {isAr ? "بناء..." : "Building..."}</> : <><Rocket style={{ width: 18, height: 18 }} /> {t("onb.roadmap.build")}</>}
           </button>
         </>

@@ -101,7 +101,7 @@ export default function AppShell() {
             <Link to="/notifications" className="relative p-2 rounded-full hover:bg-secondary/60 transition">
               <Bell style={{ width: 18, height: 18 }} className="text-muted-foreground" />
             </Link>
-            <Link to="/profile" className="w-9 h-9 rounded-full bg-gradient-to-br from-zeus-gold to-zeus-brightgold text-zeus-midnight font-bold flex items-center justify-center text-sm">
+            <Link to="/profile" className="w-9 h-9 rounded-full bg-gradient-to-br from-zeus-gold to-zeus-brightgold text-white font-bold flex items-center justify-center text-sm">
               {(profile.companion_name || "Z").charAt(0).toUpperCase()}
             </Link>
           </div>

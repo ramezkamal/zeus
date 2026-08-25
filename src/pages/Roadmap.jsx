@@ -125,7 +125,7 @@ export default function Roadmap() {
 function ViewTab({ active, onClick, icon: Icon, label }) {
   return (
     <button onClick={onClick}
-      className={`px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-1.5 transition ${active ? "bg-zeus-gold text-zeus-midnight shadow-gold" : "text-muted-foreground hover:text-foreground"}`}>
+      className={`px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-1.5 transition ${active ? "bg-zeus-gold text-white shadow-gold" : "text-muted-foreground hover:text-foreground"}`}>
       <Icon style={{ width: 13, height: 13 }} /> {label}
     </button>
   );

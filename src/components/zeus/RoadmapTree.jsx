@@ -11,7 +11,7 @@ export default function RoadmapTree({ nodes, isAr, openId, onToggle, children })
         {phases.map((p) => (
           <div key={p} className="relative">
             <div className="flex items-center gap-3 mb-4">
-              <div className="relative z-10 w-8 h-8 rounded-full bg-zeus-gold text-zeus-midnight font-bold flex items-center justify-center text-sm shadow-gold shrink-0">{p}</div>
+              <div className="relative z-10 w-8 h-8 rounded-full bg-zeus-gold text-white font-bold flex items-center justify-center text-sm shadow-gold shrink-0">{p}</div>
               <h2 className="font-heading font-bold text-base sm:text-lg">{isAr ? `المرحلة ${p}` : `Phase ${p}`}</h2>
             </div>
             <div className="space-y-3 ms-[15px] ps-6">
