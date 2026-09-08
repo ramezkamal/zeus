@@ -179,6 +179,8 @@ export default function Onboarding() {
         });
       });
       if (tasks.length) await base44.entities.Task.bulkCreate(tasks);
+      // Generate study schedule
+      await base44.functions.invoke("generateSchedule", { roadmapId: roadmap.id, availableDays: profile.available_days || [], lang });
       // welcome notification
       await base44.entities.Notification.create({
         type: "ai", title: isAr ? "خريطتك جاهزة! 🎉" : "Your roadmap is ready! 🎉",

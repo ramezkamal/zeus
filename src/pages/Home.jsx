@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, Target, Flame, Users, MessageSquare, Sparkles, Compass, Workflow, TrendingUp, Briefcase, FolderKanban } from "lucide-react";
+import { ArrowLeft, ArrowRight, Target, Flame, Users, MessageSquare, Sparkles, Compass, Workflow, TrendingUp, Briefcase, FolderKanban, Calendar } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useI18n } from "@/lib/i18n";
 import { useProfile } from "@/lib/ProfileContext";
@@ -43,6 +43,7 @@ export default function Home() {
   const streak = computeStreak(tasks);
 
   const modules = [
+    { to: "/schedule", icon: Calendar, title: isAr ? "جدولي" : "Schedule", desc: isAr ? "دروسك موزّعة على أيامك" : "Lessons on your days" },
     { to: "/roadmap", icon: Workflow, title: isAr ? "شبكة المسار" : "Path Flow", desc: isAr ? `${nodes.length} محطة متفرّعة` : `${nodes.length} branching nodes` },
     { to: "/projects", icon: FolderKanban, title: isAr ? "مشاريعي" : "Projects", desc: isAr ? "طبّق اللي تعلمته" : "Apply what you learned" },
     { to: "/community", icon: Users, title: isAr ? "مجتمعي" : "Community", desc: isAr ? "متعلّمين على نفس مسارك" : "Learners on your path" },

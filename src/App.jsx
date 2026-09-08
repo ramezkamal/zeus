@@ -30,6 +30,8 @@ import Projects from '@/pages/Projects';
 import Career from '@/pages/Career';
 import CVBuilder from '@/pages/CVBuilder';
 import Discover from '@/pages/Discover';
+import Schedule from '@/pages/Schedule';
+import Lesson from '@/pages/Lesson';
 import Companion from '@/pages/Companion';
 import Notifications from '@/pages/Notifications';
 import Profile from '@/pages/Profile';
@@ -76,6 +78,8 @@ const AuthenticatedApp = () => {
           <Route path="/career" element={<Career />} />
           <Route path="/cv-builder" element={<CVBuilder />} />
           <Route path="/discover" element={<Discover />} />
+          <Route path="/schedule" element={<Schedule />} />
+          <Route path="/lesson/:lessonId" element={<Lesson />} />
           <Route path="/companion" element={<Companion />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/profile" element={<Profile />} />
