@@ -74,8 +74,8 @@ export default function Home() {
         <Link to="/companion"
           className="flex items-center gap-3 p-4 rounded-2xl border border-border/60 bg-card/55 backdrop-blur-xl hover:border-zeus-gold/50 transition group">
           <div className="relative shrink-0">
-            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-zeus-gold to-zeus-brightgold text-zeus-midnight flex items-center justify-center font-bold">
-              {(profile?.companion_name || "Z").charAt(0)}
+            <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-zeus-gold/40 shrink-0">
+              <img src="https://media.base44.com/images/public/6a8c28083b820a6f17848b0c/d926a568e_image-removebg-preview1.png" alt="Zeus" className="w-full h-full object-cover object-top" />
             </div>
             <span className="absolute -bottom-0.5 -end-0.5 w-3 h-3 rounded-full bg-emerald-400 border-2 border-card animate-pulse-soft" />
           </div>

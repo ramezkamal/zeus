@@ -23,8 +23,8 @@ export default function ChatPanel({ messages, onSend, typing, placeholder, compa
         {messages.map((m, i) => (
           <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"} animate-fade-up`}>
             {m.role === "assistant" && (
-              <div className="w-8 h-8 shrink-0 rounded-full bg-gradient-to-br from-zeus-gold to-zeus-brightgold text-white flex items-center justify-center text-xs font-bold me-2 mt-0.5">
-                {(companionName || "Z").charAt(0).toUpperCase()}
+              <div className="w-8 h-8 shrink-0 rounded-full overflow-hidden border border-zeus-gold/40 me-2 mt-0.5">
+                <img src="https://media.base44.com/images/public/6a8c28083b820a6f17848b0c/d926a568e_image-removebg-preview1.png" alt="Zeus" className="w-full h-full object-cover object-top" />
               </div>
             )}
             <div className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
@@ -38,8 +38,8 @@ export default function ChatPanel({ messages, onSend, typing, placeholder, compa
         ))}
         {typing && (
           <div className="flex justify-start animate-fade-in">
-            <div className="w-8 h-8 shrink-0 rounded-full bg-gradient-to-br from-zeus-gold to-zeus-brightgold text-white flex items-center justify-center text-xs font-bold me-2">
-              {(companionName || "Z").charAt(0).toUpperCase()}
+            <div className="w-8 h-8 shrink-0 rounded-full overflow-hidden border border-zeus-gold/40 me-2">
+              <img src="https://media.base44.com/images/public/6a8c28083b820a6f17848b0c/d926a568e_image-removebg-preview1.png" alt="Zeus" className="w-full h-full object-cover object-top" />
             </div>
             <div className="px-4 py-3 rounded-2xl rounded-es-sm bg-card border border-border/60 flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-zeus-gold animate-pulse-soft" />

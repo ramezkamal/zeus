@@ -95,7 +95,10 @@ export default function Landing() {
 
           {/* Hero visual */}
           <div className="relative animate-fade-in">
-            <HeroVisual isAr={isAr} />
+            <div className="relative">
+              <div className="absolute inset-0 -z-10 blur-3xl bg-zeus-gold/15 rounded-full" />
+              <img src="https://media.base44.com/images/public/6a8c28083b820a6f17848b0c/636863135_generated_image.png" alt="Zeus Robot" className="relative w-full max-w-md mx-auto rounded-3xl shadow-2xl" />
+            </div>
           </div>
         </div>
       </section>

@@ -242,9 +242,12 @@ export default function Onboarding() {
           {step === "naming" && <NamingStep name={companionName} setName={setCompanionName} onSubmit={submitName} t={t} isAr={isAr} Arrow={Arrow} />}
           {step === "discovery" && (
             <div className="zeus-glass p-4 sm:p-5 h-[58vh] sm:h-[60vh] flex flex-col">
-              <div className="mb-3 pb-3 border-b border-border/60">
-                <div className="font-heading font-bold text-lg">{companionName || t("onb.name.default")} — {isAr ? "رفيقك في التعلّم" : "Your Learning Companion"}</div>
-                <div className="text-xs text-muted-foreground">{isAr ? "محادثة طبيعية عشان أفهمك" : "A natural conversation to understand you"}</div>
+              <div className="mb-3 pb-3 border-b border-border/60 flex items-center gap-3">
+                <img src="https://media.base44.com/images/public/6a8c28083b820a6f17848b0c/d926a568e_image-removebg-preview1.png" alt="Zeus" className="w-10 h-10 rounded-full object-cover object-top shrink-0" />
+                <div>
+                  <div className="font-heading font-bold text-lg">{companionName || t("onb.name.default")} — {isAr ? "رفيقك في التعلّم" : "Your Learning Companion"}</div>
+                  <div className="text-xs text-muted-foreground">{isAr ? "محادثة طبيعية عشان أفهمك" : "A natural conversation to understand you"}</div>
+                </div>
               </div>
               <div className="flex-1 min-h-0"><ChatPanel messages={messages} onSend={sendDiscovery} typing={typing} placeholder={isAr ? "اكتب ردك..." : "Type your reply..."} companionName={companionName} t={t} /></div>
             </div>
@@ -262,9 +265,7 @@ export default function Onboarding() {
 function NamingStep({ name, setName, onSubmit, t, isAr, Arrow }) {
   return (
     <div className="text-center animate-fade-up">
-      <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-zeus-gold to-zeus-brightgold flex items-center justify-center mb-6 shadow-gold animate-float">
-        <Sparkles className="text-white" style={{ width: 36, height: 36 }} />
-      </div>
+      <img src="https://media.base44.com/images/public/6a8c28083b820a6f17848b0c/02325ee37_generated_image.png" alt="Zeus" className="w-32 h-32 mx-auto object-contain mb-6 animate-float rounded-2xl" />
       <p className="text-muted-foreground mb-2">{t("onb.welcome")}</p>
       <p className="text-muted-foreground mb-6">{t("onb.before")}</p>
       <h2 className="font-heading font-extrabold text-2xl sm:text-3xl mb-6">{t("onb.name.ask")}</h2>

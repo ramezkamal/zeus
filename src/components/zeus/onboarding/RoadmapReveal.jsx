@@ -37,8 +37,8 @@ export default function RoadmapReveal({ preview, typing, building, onBuild, isAr
       {/* Companion narration */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
         className="flex items-start gap-3 mb-6">
-        <div className="shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-zeus-gold to-zeus-brightgold text-zeus-midnight flex items-center justify-center font-bold">
-          {(companionName || "Z").charAt(0)}
+        <div className="shrink-0 w-10 h-10 rounded-full overflow-hidden border border-zeus-gold/40">
+          <img src="https://media.base44.com/images/public/6a8c28083b820a6f17848b0c/d926a568e_image-removebg-preview1.png" alt="Zeus" className="w-full h-full object-cover object-top" />
         </div>
         <div className="zeus-glass p-4 flex-1">
           <p className="text-sm leading-relaxed">

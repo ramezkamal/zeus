@@ -52,8 +52,10 @@ export default function QuizPanel({ quiz, state, answers, setAnswers, result, on
   return (
     <div className="space-y-3">
       <div className={`zeus-glass p-5 text-center ${result.passed ? "border-zeus-gold/40" : "border-red-500/30"}`}>
-        <div className={`w-14 h-14 mx-auto rounded-full flex items-center justify-center mb-3 ${result.passed ? "bg-zeus-gold/15" : "bg-red-500/10"}`}>
-          {result.passed ? <Trophy className="text-zeus-gold" style={{ width: 28, height: 28 }} /> : <RotateCcw className="text-red-400" style={{ width: 28, height: 28 }} />}
+        <div className="mx-auto mb-3">
+          {result.passed
+            ? <img src="https://media.base44.com/images/public/6a8c28083b820a6f17848b0c/2e0bfccdc_generated_image.png" alt="Celebrate" className="w-20 h-20 rounded-2xl object-cover object-top" />
+            : <div className="w-14 h-14 rounded-full flex items-center justify-center bg-red-500/10"><RotateCcw className="text-red-400" style={{ width: 28, height: 28 }} /></div>}
         </div>
         <h3 className="font-heading font-bold text-lg mb-1">{result.passed ? (isAr ? "عاش! نجحت 🎉" : "Passed! 🎉") : (isAr ? "محتاج مراجعة" : "Needs review")}</h3>
         <p className="text-sm text-muted-foreground">{isAr ? `${result.correct} من ${result.total} صح (${result.score}%)` : `${result.correct} of ${result.total} correct (${result.score}%)`}</p>

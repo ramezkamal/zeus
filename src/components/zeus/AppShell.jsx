@@ -103,8 +103,8 @@ export default function AppShell() {
             <Link to="/notifications" className="relative p-2 rounded-full hover:bg-secondary/60 transition">
               <Bell style={{ width: 18, height: 18 }} className="text-muted-foreground" />
             </Link>
-            <Link to="/profile" className="w-9 h-9 rounded-full bg-gradient-to-br from-zeus-gold to-zeus-brightgold text-white font-bold flex items-center justify-center text-sm">
-              {(profile.companion_name || "Z").charAt(0).toUpperCase()}
+            <Link to="/profile" className="w-9 h-9 rounded-full overflow-hidden border-2 border-zeus-gold/40 hover:border-zeus-gold transition">
+              <img src="https://media.base44.com/images/public/6a8c28083b820a6f17848b0c/d926a568e_image-removebg-preview1.png" alt="Profile" className="w-full h-full object-cover object-top" />
             </Link>
           </div>
         </header>

@@ -24,8 +24,8 @@ export default function TutorSheet({ open, onClose, messages, onSend, typing, is
           >
             <div className="flex items-center justify-between p-4 border-b border-border/60">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-full bg-zeus-gold/15 flex items-center justify-center">
-                  <Bot className="text-zeus-gold" style={{ width: 18, height: 18 }} />
+                <div className="w-9 h-9 rounded-full overflow-hidden border border-zeus-gold/40">
+                  <img src="https://media.base44.com/images/public/6a8c28083b820a6f17848b0c/d926a568e_image-removebg-preview1.png" alt="Tutor" className="w-full h-full object-cover object-top" />
                 </div>
                 <div>
                   <div className="font-heading font-bold text-sm">{isAr ? "مدرّبك الذكي" : "AI Tutor"}</div>
