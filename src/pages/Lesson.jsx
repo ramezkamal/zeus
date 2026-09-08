@@ -171,7 +171,7 @@ export default function Lesson() {
       )}
 
       {!preparing && !prepareError && (
-        <button onClick={() => setTutorOpen(true)} className="fixed bottom-6 end-4 z-30 w-14 h-14 rounded-full bg-zeus-gold text-zeus-midnight shadow-gold flex items-center justify-center hover:bg-zeus-brightgold transition">
+        <button onClick={() => setTutorOpen(true)} className="fixed bottom-24 end-4 z-30 w-14 h-14 rounded-full bg-zeus-gold text-zeus-midnight shadow-gold flex items-center justify-center hover:bg-zeus-brightgold transition">
           <Bot style={{ width: 24, height: 24 }} />
         </button>
       )}

@@ -8,6 +8,7 @@ import { base44 } from "@/api/base44Client";
 import { useI18n } from "@/lib/i18n";
 import { useProfile } from "@/lib/ProfileContext";
 import Logo from "./Logo";
+import FloatingCompanion from "./FloatingCompanion";
 import LanguageToggle from "./LanguageToggle";
 
 const NAV = [
@@ -161,6 +162,7 @@ export default function AppShell() {
           </div>
         </div>
       )}
+      <FloatingCompanion />
     </div>
   );
 }
