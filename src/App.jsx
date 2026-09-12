@@ -37,6 +37,7 @@ import Companion from '@/pages/Companion';
 import Notifications from '@/pages/Notifications';
 import Profile from '@/pages/Profile';
 import Settings from '@/pages/Settings';
+import PublicPortfolio from '@/pages/PublicPortfolio';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -66,13 +67,15 @@ const AuthenticatedApp = () => {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
 
+      <Route path="/portfolio/:userId" element={<PublicPortfolio />} />
+
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
         <Route path="/onboarding" element={<ProfileProvider><Onboarding /></ProfileProvider>} />
         <Route element={<ProfileProvider><AppShell /></ProfileProvider>}>
           <Route path="/app" element={<Home />} />
-          <Route path="/journey" element={<Journey />} />
+          <Route path="/journey" element={<Navigate to="/roadmap" replace />} />
           <Route path="/roadmap" element={<Roadmap />} />
-          <Route path="/learn" element={<Learn />} />
+          <Route path="/learn" element={<Navigate to="/schedule" replace />} />
           <Route path="/progress" element={<Progress />} />
           <Route path="/community" element={<Community />} />
           <Route path="/projects" element={<Projects />} />

@@ -20,8 +20,8 @@ const STEPS = [
 ];
 
 const welcomeMessage = (name, isAr) => isAr
-  ? `أهلاً 👋 أنا ${name}، هكون رفيقك في التعلّم هنا في ZEUS. قبل ما نبني أي حاجة، عايز أفهمك الأول. تحب تبدأ تقولي إنت مين وإيه اللي عايز تتعلمه؟`
-  : `Hey 👋 I'm ${name}, your learning companion at ZEUS. Before we build anything, I want to understand you first. Tell me — who you are and what you'd like to learn?`;
+  ? `أهلًا يا ${name} 👋 خلينا نفهمك الأول قبل ما نحدد هتتعلم إيه. عايز أفهم إنت مين، إيه اللي نفسك تتعلمه، وإيه المشاكل اللي واقفة قدامك. احكيلي براحتك.`
+  : `Hey ${name} 👋 Let's understand you first before deciding what to learn. Tell me — who you are, what you want to learn, and what's holding you back. Just talk freely.`;
 
 export default function Onboarding() {
   const { t, lang, dir } = useI18n();
@@ -266,8 +266,6 @@ function NamingStep({ name, setName, onSubmit, t, isAr, Arrow }) {
   return (
     <div className="text-center animate-fade-up">
       <img src="https://media.base44.com/images/public/6a8c28083b820a6f17848b0c/02325ee37_generated_image.png" alt="Zeus" className="w-32 h-32 mx-auto object-contain mb-6 animate-float rounded-2xl" />
-      <p className="text-muted-foreground mb-2">{t("onb.welcome")}</p>
-      <p className="text-muted-foreground mb-6">{t("onb.before")}</p>
       <h2 className="font-heading font-extrabold text-2xl sm:text-3xl mb-6">{t("onb.name.ask")}</h2>
       <input
         value={name}
@@ -278,7 +276,7 @@ function NamingStep({ name, setName, onSubmit, t, isAr, Arrow }) {
         autoFocus
       />
       <button onClick={onSubmit} className="mt-6 inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-zeus-gold text-zeus-midnight font-semibold hover:bg-zeus-brightgold transition shadow-gold">
-        {isAr ? "يلا نبدأ" : "Let's begin"} <Arrow style={{ width: 18, height: 18 }} />
+        {isAr ? "كمّل" : "Continue"} <Arrow style={{ width: 18, height: 18 }} />
       </button>
     </div>
   );

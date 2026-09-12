@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Outlet, useLocation, useNavigate, Link, Navigate } from "react-router-dom";
 import {
-  Home, Sparkles, Map, BookOpen, TrendingUp, Users, Rocket, Briefcase,
-  MessageSquare, Bell, User, Settings, LogOut, Menu, X, Calendar
+  Home, Map, TrendingUp, Users, Briefcase,
+  Settings, LogOut, Menu, X, Calendar, Bell
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useI18n } from "@/lib/i18n";
@@ -13,21 +13,15 @@ import LanguageToggle from "./LanguageToggle";
 
 const NAV = [
   { key: "nav.home", to: "/app", icon: Home },
-  { key: "nav.journey", to: "/journey", icon: Sparkles },
   { key: "nav.roadmap", to: "/roadmap", icon: Map },
-  { key: "nav.learn", to: "/learn", icon: BookOpen },
   { key: "nav.schedule", to: "/schedule", icon: Calendar },
   { key: "nav.progress", to: "/progress", icon: TrendingUp },
   { key: "nav.community", to: "/community", icon: Users },
-  { key: "nav.projects", to: "/projects", icon: Rocket },
   { key: "nav.career", to: "/career", icon: Briefcase },
-  { key: "nav.companion", to: "/companion", icon: MessageSquare },
-  { key: "nav.notifications", to: "/notifications", icon: Bell },
-  { key: "nav.profile", to: "/profile", icon: User },
   { key: "nav.settings", to: "/settings", icon: Settings }
 ];
 
-const BOTTOM = ["nav.home", "nav.schedule", "nav.community", "nav.companion", "nav.profile"];
+const BOTTOM = ["nav.home", "nav.roadmap", "nav.schedule", "nav.progress", "nav.settings"];
 
 export default function AppShell() {
   const { t, dir, lang } = useI18n();
@@ -144,7 +138,7 @@ export default function AppShell() {
               <button onClick={() => setMoreOpen(false)} className="p-2 rounded-full hover:bg-secondary/60"><X style={{ width: 18, height: 18 }} /></button>
             </div>
             <div className="grid grid-cols-3 gap-2">
-              {NAV.map((item) => {
+              {NAV.filter((n) => !BOTTOM.includes(n.key)).map((item) => {
                 const Icon = item.icon;
                 const active = loc.pathname === item.to;
                 return (

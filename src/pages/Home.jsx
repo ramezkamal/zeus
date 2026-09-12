@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, Target, Flame, Users, MessageSquare, Sparkles, Compass, Workflow, TrendingUp, Briefcase, FolderKanban, Calendar } from "lucide-react";
+import { ArrowLeft, ArrowRight, Target, Flame, Users, MessageSquare, Sparkles, TrendingUp, BookOpen } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useI18n } from "@/lib/i18n";
 import { useProfile } from "@/lib/ProfileContext";
 import HeroCard from "@/components/zeus/dashboard/HeroCard";
 import StatStrip from "@/components/zeus/dashboard/StatStrip";
-import ModuleGrid from "@/components/zeus/dashboard/ModuleGrid";
 import SkillsCard from "@/components/zeus/dashboard/SkillsCard";
 
 export default function Home() {
@@ -17,17 +16,20 @@ export default function Home() {
   const Arrow = isAr ? ArrowLeft : ArrowRight;
   const [roadmap, setRoadmap] = useState(null);
   const [tasks, setTasks] = useState([]);
+  const [lessons, setLessons] = useState([]);
   const [companion, setCompanion] = useState(null);
 
   useEffect(() => {
     (async () => {
-      const [r, tk, c] = await Promise.all([
+      const [r, tk, ls, c] = await Promise.all([
         base44.entities.Roadmap.filter({ status: "active" }, "-created_date", 1),
         base44.entities.Task.filter({}, "order", 100),
+        base44.entities.Lesson.filter({}, "order", 50),
         base44.entities.Conversation.filter({ type: "companion" }, "-created_date", 1)
       ]);
       if (r.length) setRoadmap(r[0]);
       setTasks(tk);
+      setLessons(ls);
       if (c.length) setCompanion(c[0]);
     })();
   }, []);
@@ -42,15 +44,8 @@ export default function Home() {
   const lastMsg = companion?.messages?.slice(-1)[0];
   const streak = computeStreak(tasks);
 
-  const modules = [
-    { to: "/schedule", icon: Calendar, title: isAr ? "جدولي" : "Schedule", desc: isAr ? "دروسك موزّعة على أيامك" : "Lessons on your days" },
-    { to: "/roadmap", icon: Workflow, title: isAr ? "شبكة المسار" : "Path Flow", desc: isAr ? `${nodes.length} محطة متفرّعة` : `${nodes.length} branching nodes` },
-    { to: "/projects", icon: FolderKanban, title: isAr ? "مشاريعي" : "Projects", desc: isAr ? "طبّق اللي تعلمته" : "Apply what you learned" },
-    { to: "/community", icon: Users, title: isAr ? "مجتمعي" : "Community", desc: isAr ? "متعلّمين على نفس مسارك" : "Learners on your path" },
-    { to: "/discover", icon: Compass, title: isAr ? "اكتشف مجالات" : "Discover", desc: isAr ? "مسارات جديدة تتعلمها" : "New paths to learn" },
-    { to: "/career", icon: Briefcase, title: isAr ? "مسارك المهني" : "Career", desc: isAr ? "سيرة ذاتية وفرص شغل" : "CV and opportunities" },
-    { to: "/progress", icon: TrendingUp, title: isAr ? "تقدّمي" : "Progress", desc: isAr ? "أرقامك بالتفصيل" : "Your numbers in detail" }
-  ];
+  const currentLesson = lessons.find((l) => l.status === "available");
+  const phases = [...new Set(nodes.map((n) => n.phase || 1))].sort((a, b) => a - b);
 
   return (
     <div className="space-y-6 pb-4" dir={dir}>
@@ -67,12 +62,37 @@ export default function Home() {
       <StatStrip stats={[
         { icon: Flame, value: streak, label: isAr ? "يوم متتالي" : "day streak" },
         { icon: Target, value: `${doneTasks}/${totalTasks}`, label: isAr ? "مهام" : "tasks" },
-        { icon: Workflow, value: nodes.length, label: isAr ? "محطة" : "nodes" }
+        { icon: TrendingUp, value: `${progress}%`, label: isAr ? "تقدّم" : "progress" }
       ]} />
 
-      <Section title={isAr ? "مدرّبك" : "Your Coach"} icon={MessageSquare} delay={0.15}>
-        <Link to="/companion"
-          className="flex items-center gap-3 p-4 rounded-2xl border border-border/60 bg-card/55 backdrop-blur-xl hover:border-zeus-gold/50 transition group">
+      <Section title={isAr ? "كمّل تعلّمك" : "Continue Learning"} icon={BookOpen} delay={0.15}>
+        <Link to={currentLesson ? `/lesson/${currentLesson.id}` : "/schedule"} className="block zeus-glass p-4 hover:zeus-gold-border transition group">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="font-heading font-bold text-sm">{currentLesson?.node_title || (isAr ? "ابدأ أول درس" : "Start your first lesson")}</span>
+            <Arrow className="text-muted-foreground group-hover:text-zeus-gold transition" style={{ width: 16, height: 16 }} />
+          </div>
+          <p className="text-muted-foreground text-xs">{currentLesson ? (isAr ? `أسبوع ${currentLesson.week} · ${currentLesson.day}` : `Week ${currentLesson.week} · ${currentLesson.day}`) : (isAr ? "دروسك مستنية في الجدول" : "Your lessons are waiting in the schedule")}</p>
+        </Link>
+      </Section>
+
+      <Section title={isAr ? "تقدّم المسار" : "Roadmap Progress"} icon={TrendingUp} delay={0.2}>
+        <Link to="/roadmap" className="block zeus-glass p-4 hover:zeus-gold-border transition group">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm text-muted-foreground">{isAr ? "عدد المراحل" : "Total Stages"}</span>
+            <span className="font-heading font-bold text-zeus-gold">{phases.length || 1}</span>
+          </div>
+          <div className="h-2.5 rounded-full bg-secondary/60 overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-zeus-gold to-zeus-brightgold rounded-full transition-all" style={{ width: `${progress}%` }} />
+          </div>
+          <div className="flex justify-between mt-2 text-xs text-muted-foreground">
+            <span>{progress}%</span>
+            <span>{isAr ? `${nodes.length} محطة` : `${nodes.length} nodes`}</span>
+          </div>
+        </Link>
+      </Section>
+
+      <Section title={isAr ? "مدرّبك" : "Your Coach"} icon={MessageSquare} delay={0.25}>
+        <Link to="/companion" className="flex items-center gap-3 p-4 rounded-2xl border border-border/60 bg-card/55 backdrop-blur-xl hover:border-zeus-gold/50 transition group">
           <div className="relative shrink-0">
             <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-zeus-gold/40 shrink-0">
               <img src="https://media.base44.com/images/public/6a8c28083b820a6f17848b0c/d926a568e_image-removebg-preview1.png" alt="Zeus" className="w-full h-full object-cover object-top" />
@@ -81,20 +101,14 @@ export default function Home() {
           </div>
           <div className="flex-1 min-w-0">
             <div className="font-heading font-bold text-sm">{profile?.companion_name || "ZEUS"}</div>
-            <div className="text-[11px] text-muted-foreground line-clamp-1">
-              {lastMsg ? lastMsg.content : (isAr ? "ابدأ محادثة مع مدرّبك" : "Start a chat with your coach")}
-            </div>
+            <div className="text-[11px] text-muted-foreground line-clamp-1">{lastMsg ? lastMsg.content : (isAr ? "اسأل مدرّبك أي حاجة" : "Ask your coach anything")}</div>
           </div>
           <Arrow className="text-muted-foreground shrink-0 group-hover:text-zeus-gold transition" style={{ width: 16, height: 16 }} />
         </Link>
       </Section>
 
-      <Section title={isAr ? "مهاراتي" : "My Skills"} icon={Sparkles} delay={0.2}>
+      <Section title={isAr ? "مهاراتي" : "My Skills"} icon={Sparkles} delay={0.3}>
         <SkillsCard skills={skills} isAr={isAr} />
-      </Section>
-
-      <Section title={isAr ? "أقسام التطبيق" : "Your Workspace"} icon={Compass} delay={0.25}>
-        <ModuleGrid modules={modules} Arrow={Arrow} />
       </Section>
     </div>
   );
