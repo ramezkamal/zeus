@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, Map, Rocket, Sparkles } from "lucide-react";
+import { Loader2, Map, Rocket, Sparkles, Target, Clock, ListChecks } from "lucide-react";
 
 export default function RoadmapReveal({ preview, typing, building, onBuild, isAr, companionName }) {
   const nodes = preview?.nodes || [];
   const phases = [...new Set(nodes.map((n) => n.phase))].sort((a, b) => a - b);
   const skills = [...new Set(nodes.flatMap((n) => n.skills || []))].slice(0, 10);
+  const totalHours = nodes.reduce((sum, n) => sum + (n.estimated_hours || 0), 0);
+  const totalProjects = nodes.reduce((sum, n) => sum + (n.projects || []).length, 0);
   const [stage, setStage] = useState(0);
 
   useEffect(() => {
@@ -36,7 +38,7 @@ export default function RoadmapReveal({ preview, typing, building, onBuild, isAr
     <div className="animate-fade-up" dir={isAr ? "rtl" : "ltr"}>
       {/* Companion narration */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-        className="flex items-start gap-3 mb-6">
+        className="flex items-start gap-3 mb-5">
         <div className="shrink-0 w-10 h-10 rounded-full overflow-hidden border border-zeus-gold/40">
           <img src="https://media.base44.com/images/public/6a8c28083b820a6f17848b0c/d926a568e_image-removebg-preview1.png" alt="Zeus" className="w-full h-full object-cover object-top" />
         </div>
@@ -49,17 +51,36 @@ export default function RoadmapReveal({ preview, typing, building, onBuild, isAr
         </div>
       </motion.div>
 
+      {/* Stats */}
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-4 gap-2 mb-5">
+        {[
+          { icon: Map, value: phases.length, label: isAr ? "مراحل" : "Phases" },
+          { icon: Clock, value: totalHours, label: isAr ? "ساعة" : "Hours" },
+          { icon: ListChecks, value: nodes.length, label: isAr ? "دروس" : "Lessons" },
+          { icon: Rocket, value: totalProjects, label: isAr ? "مشاريع" : "Projects" }
+        ].map((s, i) => {
+          const Icon = s.icon;
+          return (
+            <div key={i} className="zeus-glass p-3 text-center">
+              <Icon className="text-zeus-gold mx-auto mb-1" style={{ width: 16, height: 16 }} />
+              <div className="font-heading font-bold text-lg">{s.value}</div>
+              <div className="text-[10px] text-muted-foreground">{s.label}</div>
+            </div>
+          );
+        })}
+      </motion.div>
+
       {/* Skills reveal */}
       <AnimatePresence>
         {stage >= 1 && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-6">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-5">
             <div className="text-xs font-semibold uppercase tracking-wide text-zeus-brightgold flex items-center gap-1.5 mb-2.5">
               <Sparkles style={{ width: 13, height: 13 }} /> {isAr ? "هنبني المهارات دي مع بعض" : "We'll build these skills together"}
             </div>
             <div className="flex flex-wrap gap-2">
               {skills.map((s, i) => (
                 <motion.span key={s} initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: i * 0.15, type: "spring", stiffness: 300, damping: 20 }}
+                  transition={{ delay: i * 0.1, type: "spring", stiffness: 300, damping: 20 }}
                   className="px-3 py-1.5 rounded-full bg-zeus-gold/10 border border-zeus-gold/30 text-zeus-brightgold text-xs font-medium">
                   {s}
                 </motion.span>
@@ -73,21 +94,34 @@ export default function RoadmapReveal({ preview, typing, building, onBuild, isAr
       <AnimatePresence>
         {stage >= 2 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-2.5 max-h-[34vh] overflow-y-auto pe-1">
-            {phases.map((p, i) => (
-              <motion.div key={p} initial={{ opacity: 0, x: isAr ? 20 : -20 }} animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.5, duration: 0.4 }}
-                className="zeus-glass p-3.5 flex items-start gap-3">
-                <div className="shrink-0 w-8 h-8 rounded-full bg-zeus-gold text-zeus-midnight flex items-center justify-center text-sm font-bold">{p}</div>
-                <div className="min-w-0">
-                  <div className="text-zeus-brightgold text-xs font-semibold mb-1">{isAr ? `المرحلة ${p}` : `Phase ${p}`}</div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {nodes.filter((n) => n.phase === p).map((n) => (
-                      <span key={n.id} className="px-2.5 py-1 rounded-full bg-secondary/40 text-xs">{n.title}</span>
-                    ))}
+            {phases.map((p, i) => {
+              const phaseNodes = nodes.filter((n) => n.phase === p);
+              const phaseProjects = phaseNodes.flatMap((n) => n.projects || []);
+              return (
+                <motion.div key={p} initial={{ opacity: 0, x: isAr ? 20 : -20 }} animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.4, duration: 0.4 }}
+                  className="zeus-glass p-3.5 flex items-start gap-3">
+                  <div className="shrink-0 w-8 h-8 rounded-full bg-zeus-gold text-zeus-midnight flex items-center justify-center text-sm font-bold">{p}</div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-zeus-brightgold text-xs font-semibold mb-1">{isAr ? `المرحلة ${p}` : `Phase ${p}`}</div>
+                    <div className="flex flex-wrap gap-1.5 mb-1.5">
+                      {phaseNodes.map((n) => (
+                        <span key={n.id} className="px-2.5 py-1 rounded-full bg-secondary/40 text-xs">{n.title}</span>
+                      ))}
+                    </div>
+                    {phaseProjects.length > 0 && (
+                      <div className="text-[11px] text-muted-foreground flex items-center gap-1">
+                        <Rocket style={{ width: 11, height: 11 }} className="text-zeus-gold" />
+                        {isAr ? "مشاريع: " : "Projects: "}{phaseProjects.join("، ")}
+                      </div>
+                    )}
+                    {i < phases.length - 1 && (
+                      <div className="text-[11px] text-zeus-gold/60 mt-1">{isAr ? "↓ اختبار قبل الانتقال للمرحلة التالية" : "↓ Assessment before next phase"}</div>
+                    )}
                   </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              );
+            })}
           </motion.div>
         )}
       </AnimatePresence>
@@ -97,7 +131,7 @@ export default function RoadmapReveal({ preview, typing, building, onBuild, isAr
         {stage >= 3 && (
           <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className="text-center mt-6">
             <p className="text-sm text-muted-foreground mb-3">
-              {isAr ? "جاهز؟ هعملك دلوقتي خريطة تفاعلية — كل محطة فيها مهام ومصادر جاهزة." : "Ready? I'll now build your interactive map — every stop has tasks and ready resources."}
+              {isAr ? "جاهز؟ هعملك خريطة تفاعلية — كل محطة فيها مهام ومصادر ومشاريع واختبارات." : "Ready? I'll build your interactive map — every stop has tasks, resources, projects, and assessments."}
             </p>
             <button onClick={onBuild} disabled={building}
               className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-zeus-gold text-zeus-midnight font-semibold hover:bg-zeus-brightgold transition shadow-gold disabled:opacity-50">

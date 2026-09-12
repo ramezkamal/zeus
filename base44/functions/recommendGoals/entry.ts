@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { ZEUS_SYSTEM } from "../../shared/zeusPrompts.js";
 
 export default async function(req) {
@@ -13,10 +13,19 @@ export default async function(req) {
 
     const prompt = `${ZEUS_SYSTEM}
 
-The user said they want to learn: "${statedGoal}".
+The user wants to learn: "${statedGoal}".
 Their Learning DNA: ${JSON.stringify(profile)}.
 
-Analyze possible career/learning paths that fit this user. Return 3-5 ranked recommendations with a fit score (0-100) and a short reason for each. Identify the strongest fit. Do not immediately assume the literal goal is the best — reason from their DNA (strengths, weaknesses, time, motivation, career intent).
+Analyze possible CAREER PATHS that fit this user. Return 3-5 ranked paths with:
+- goal: career path name
+- score: fit score (0-100) based on personality, interests, skills, goals, time, background
+- reason: short reason why it fits
+- description: 1-2 sentence description of the path
+- key_skills: top 3-5 skills required
+- job_titles: 2-3 example job titles
+- nature: nature of the work (1 sentence)
+
+Reason from their DNA (strengths, weaknesses, time, motivation, career intent). Do not assume the literal goal is the best.
 Reply in ${profile.preferred_language === "en" ? "English" : "Egyptian Arabic"}.`;
 
     const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
@@ -32,7 +41,11 @@ Reply in ${profile.preferred_language === "en" ? "English" : "Egyptian Arabic"}.
               properties: {
                 goal: { type: "string" },
                 score: { type: "number" },
-                reason: { type: "string" }
+                reason: { type: "string" },
+                description: { type: "string" },
+                key_skills: { type: "array", items: { type: "string" } },
+                job_titles: { type: "array", items: { type: "string" } },
+                nature: { type: "string" }
               },
               required: ["goal", "score", "reason"]
             }

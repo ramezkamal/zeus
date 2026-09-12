@@ -39,6 +39,7 @@ export default function Onboarding() {
   const [keySkills, setKeySkills] = useState([]);
   const [skillLevels, setSkillLevels] = useState({});
   const [roadmapPreview, setRoadmapPreview] = useState(null);
+  const [skillsText, setSkillsText] = useState("");
   const [building, setBuilding] = useState(false);
 
   useEffect(() => {
@@ -146,7 +147,7 @@ export default function Onboarding() {
   // ---------- Assessment ----------
   const submitSkills = async () => {
     const graph = keySkills.map((s) => ({ skill: s, level: skillLevels[s] ?? 50 }));
-    await updateProfile({ skill_graph: graph, onboarding_step: "roadmap" });
+    await updateProfile({ skill_graph: graph, strengths: skillsText.trim() || undefined, onboarding_step: "roadmap" });
     setStep("roadmap");
   };
 
@@ -254,7 +255,7 @@ export default function Onboarding() {
           )}
           {step === "dna" && <DnaSummary profile={profile} isAr={isAr} Arrow={Arrow} onConfirm={async (patch) => { await updateProfile(patch); goto("goal"); }} />}
           {step === "goal" && <GoalStep recs={recs} typing={typing} onPick={pickGoal} t={t} isAr={isAr} />}
-          {step === "assessment" && <AssessmentStep skills={keySkills} levels={skillLevels} setLevels={setSkillLevels} onSubmit={submitSkills} t={t} isAr={isAr} Arrow={Arrow} />}
+          {step === "assessment" && <AssessmentStep skills={keySkills} levels={skillLevels} setLevels={setSkillLevels} skillsText={skillsText} setSkillsText={setSkillsText} onSubmit={submitSkills} t={t} isAr={isAr} Arrow={Arrow} />}
           {step === "roadmap" && <RoadmapReveal preview={roadmapPreview} typing={typing} building={building} onBuild={buildRoadmap} isAr={isAr} companionName={companionName} />}
         </div>
       </main>
@@ -325,7 +326,7 @@ function GoalStep({ recs, typing, onPick, t, isAr }) {
   );
 }
 
-function AssessmentStep({ skills, levels, setLevels, onSubmit, t, isAr, Arrow }) {
+function AssessmentStep({ skills, levels, setLevels, skillsText, setSkillsText, onSubmit, t, isAr, Arrow }) {
   return (
     <div className="animate-fade-up">
       <div className="text-center mb-6">
@@ -348,6 +349,12 @@ function AssessmentStep({ skills, levels, setLevels, onSubmit, t, isAr, Arrow })
             </div>
           );
         })}
+      </div>
+      <div className="zeus-glass p-4 mt-4">
+        <label className="text-xs font-semibold text-zeus-brightgold block mb-2">{isAr ? "احكي لنا عن مهاراتك بالتفصيل" : "Tell us about your skills in detail"}</label>
+        <textarea value={skillsText} onChange={(e) => setSkillsText(e.target.value)} rows={3}
+          placeholder={isAr ? "اكتب إيه اللي تقدر تعمله فعليًا، الأدوات اللي استخدمتها، والمشاريع اللي اشتغلت عليها..." : "Write what you can actually do, tools you've used, and projects you've worked on..."}
+          className="w-full bg-transparent border border-border/60 rounded-xl px-3.5 py-2.5 text-sm outline-none focus:zeus-gold-border resize-none" />
       </div>
       <div className="text-center mt-6">
         <button onClick={onSubmit} className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-zeus-gold text-zeus-midnight font-semibold hover:bg-zeus-brightgold transition shadow-gold">
