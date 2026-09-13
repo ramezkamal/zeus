@@ -89,8 +89,17 @@
           },
           "level": {
             "type": "string"
+          },
+          "category": {
+            "type": "string"
           }
         }
+      }
+    },
+    "soft_skills": {
+      "type": "array",
+      "items": {
+        "type": "string"
       }
     },
     "languages": {
@@ -110,8 +119,49 @@
     "certifications": {
       "type": "array",
       "items": {
-        "type": "string"
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "issuer": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "link": {
+            "type": "string"
+          }
+        }
       }
+    },
+    "projects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "link": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "accent_color": {
+      "type": "string",
+      "default": "gold"
+    },
+    "photo_url": {
+      "type": "string"
+    },
+    "voice_url": {
+      "type": "string"
     }
   },
   "required": [],

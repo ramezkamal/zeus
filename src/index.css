@@ -40,6 +40,36 @@
     --zeus-softgold: 46 100% 82%;
     --zeus-cloud: 220 13% 91%;
   }
+
+  [data-theme="light"] {
+    --background: 0 0% 100%;
+    --foreground: 223 49% 14%;
+    --card: 220 14% 98%;
+    --card-foreground: 223 49% 14%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 223 49% 14%;
+    --primary: 45 100% 51%;
+    --primary-foreground: 223 49% 14%;
+    --secondary: 220 14% 95%;
+    --secondary-foreground: 223 49% 14%;
+    --muted: 220 14% 93%;
+    --muted-foreground: 220 9% 42%;
+    --accent: 45 100% 82%;
+    --accent-foreground: 223 49% 14%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 86%;
+    --input: 220 13% 88%;
+    --ring: 45 100% 51%;
+    --zeus-midnight: 0 0% 100%;
+    --zeus-navy: 220 14% 96%;
+    --zeus-steel: 220 9% 55%;
+    --zeus-gold: 45 100% 45%;
+    --zeus-orange: 38 92% 45%;
+    --zeus-brightgold: 45 100% 40%;
+    --zeus-softgold: 45 80% 90%;
+    --zeus-cloud: 223 49% 14%;
+  }
 }
 
 @layer base {
@@ -53,6 +83,9 @@
       radial-gradient(60rem 60rem at 80% -10%, rgba(255, 193, 7, 0.08), transparent 60%),
       radial-gradient(50rem 50rem at -10% 10%, rgba(20, 33, 61, 0.6), transparent 50%);
     background-attachment: fixed;
+  }
+  [data-theme="light"] body {
+    background-image: none;
   }
   h1, h2, h3, h4, h5 { @apply font-heading; }
   ::selection { background: rgba(255, 193, 7, 0.4); color: #0D1426; }

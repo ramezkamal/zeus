@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Bot } from "lucide-react";
 import ChatPanel from "@/components/zeus/ChatPanel";
 
-export default function TutorSheet({ open, onClose, messages, onSend, typing, isAr, t }) {
+export default function TutorSheet({ open, onClose, messages, onSend, typing, isAr, t, lang }) {
   useEffect(() => {
     if (open) document.body.style.overflow = "hidden";
     else document.body.style.overflow = "";
@@ -39,7 +39,7 @@ export default function TutorSheet({ open, onClose, messages, onSend, typing, is
             <div className="flex-1 min-h-0 p-3">
               <ChatPanel messages={messages} onSend={onSend} typing={typing}
                 placeholder={isAr ? "اكتب سؤالك..." : "Type your question..."}
-                companionName="AI Tutor" t={t} />
+                companionName="AI Tutor" t={t} lang={lang} />
             </div>
           </motion.div>
         </>

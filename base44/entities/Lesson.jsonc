@@ -80,6 +80,35 @@
         ]
       }
     },
+    "task": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "deliverables": {
+          "type": "string"
+        },
+        "completion_criteria": {
+          "type": "string"
+        },
+        "applied_skills": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "video_url": {
       "type": "string"
     },

@@ -1,13 +1,38 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Send } from "lucide-react";
+import { Send, Mic, MicOff } from "lucide-react";
 
-export default function ChatPanel({ messages, onSend, typing, placeholder, companionName, t }) {
+export default function ChatPanel({ messages, onSend, typing, placeholder, companionName, t, lang }) {
   const [text, setText] = useState("");
+  const [listening, setListening] = useState(false);
   const endRef = useRef(null);
+  const recognitionRef = useRef(null);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, typing]);
+
+  const startListening = () => {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) return;
+    const recognition = new SR();
+    recognition.lang = lang === "ar" ? "ar-EG" : "en-US";
+    recognition.interimResults = false;
+    recognition.continuous = false;
+    recognition.onresult = (e) => {
+      setText(e.results[0][0].transcript);
+      setListening(false);
+    };
+    recognition.onerror = () => setListening(false);
+    recognition.onend = () => setListening(false);
+    recognition.start();
+    setListening(true);
+    recognitionRef.current = recognition;
+  };
+
+  const stopListening = () => {
+    recognitionRef.current?.stop();
+    setListening(false);
+  };
 
   const submit = (e) => {
     e.preventDefault();
@@ -55,9 +80,16 @@ export default function ChatPanel({ messages, onSend, typing, placeholder, compa
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder={placeholder}
+          placeholder={listening ? (lang === "ar" ? "بتسمع..." : "Listening...") : placeholder}
           className="flex-1 px-4 py-3 rounded-full bg-card border border-border/60 focus:zeus-gold-border outline-none text-sm transition"
         />
+        <button type="button" onClick={listening ? stopListening : startListening}
+          className={`w-11 h-11 shrink-0 rounded-full flex items-center justify-center transition ${
+            listening ? "bg-red-500 text-white animate-pulse" : "bg-card border border-border/60 text-muted-foreground hover:text-zeus-gold"
+          }`}
+          title={lang === "ar" ? "تحدث" : "Voice input"}>
+          {listening ? <MicOff style={{ width: 18, height: 18 }} /> : <Mic style={{ width: 18, height: 18 }} />}
+        </button>
         <button type="submit" disabled={typing || !text.trim()} className="w-11 h-11 shrink-0 rounded-full bg-zeus-gold text-zeus-midnight flex items-center justify-center hover:bg-zeus-brightgold transition disabled:opacity-40 shadow-gold-sm">
           <Send style={{ width: 18, height: 18 }} />
         </button>

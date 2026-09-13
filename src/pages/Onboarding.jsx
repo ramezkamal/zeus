@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Sparkles, Brain, Map, Target, Gauge, Rocket, ArrowLeft, ArrowRight, Check, Loader2, Pencil } from "lucide-react";
+import { Sparkles, Brain, Map, Target, Gauge, Rocket, ArrowLeft, ArrowRight, Check, Loader2, Pencil, GitCompare } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useI18n } from "@/lib/i18n";
 import { useProfile } from "@/lib/ProfileContext";
@@ -40,6 +40,7 @@ export default function Onboarding() {
   const [skillLevels, setSkillLevels] = useState({});
   const [roadmapPreview, setRoadmapPreview] = useState(null);
   const [skillsText, setSkillsText] = useState("");
+  const [fieldComparison, setFieldComparison] = useState(null);
   const [building, setBuilding] = useState(false);
 
   useEffect(() => {
@@ -110,6 +111,7 @@ export default function Onboarding() {
       const updated = [...next, aiMsg];
       setMessages(updated);
       await base44.entities.Conversation.update(conversation.id, { messages: updated });
+      if (data.field_comparison) setFieldComparison(data.field_comparison);
       if (data.isComplete && data.profile) {
         const clean = Object.fromEntries(Object.entries(data.profile).filter(([, v]) => v !== null && v !== undefined && v !== ""));
         await updateProfile({ ...clean, onboarding_step: "dna" });
@@ -242,6 +244,7 @@ export default function Onboarding() {
         <div className="w-full max-w-2xl">
           {step === "naming" && <NamingStep name={companionName} setName={setCompanionName} onSubmit={submitName} t={t} isAr={isAr} Arrow={Arrow} />}
           {step === "discovery" && (
+            <>
             <div className="zeus-glass p-4 sm:p-5 h-[58vh] sm:h-[60vh] flex flex-col">
               <div className="mb-3 pb-3 border-b border-border/60 flex items-center gap-3">
                 <img src="https://media.base44.com/images/public/6a8c28083b820a6f17848b0c/d926a568e_image-removebg-preview1.png" alt="Zeus" className="w-10 h-10 rounded-full object-cover object-top shrink-0" />
@@ -250,8 +253,28 @@ export default function Onboarding() {
                   <div className="text-xs text-muted-foreground">{isAr ? "محادثة طبيعية عشان أفهمك" : "A natural conversation to understand you"}</div>
                 </div>
               </div>
-              <div className="flex-1 min-h-0"><ChatPanel messages={messages} onSend={sendDiscovery} typing={typing} placeholder={isAr ? "اكتب ردك..." : "Type your reply..."} companionName={companionName} t={t} /></div>
+              <div className="flex-1 min-h-0"><ChatPanel messages={messages} onSend={sendDiscovery} typing={typing} placeholder={isAr ? "اكتب ردك..." : "Type your reply..."} companionName={companionName} t={t} lang={lang} /></div>
             </div>
+            {fieldComparison && (
+              <div className="mt-4 max-h-[30vh] overflow-y-auto space-y-3">
+                <div className="text-xs font-semibold uppercase tracking-wide text-zeus-brightgold flex items-center gap-1.5">
+                  <GitCompare style={{ width: 13, height: 13 }} /> {isAr ? "مقارنة المجالات" : "Field Comparison"}
+                </div>
+                {fieldComparison.map((f, i) => (
+                  <div key={i} className="zeus-glass p-4">
+                    <h3 className="font-heading font-bold text-sm mb-2">{f.field}</h3>
+                    {f.description && <p className="text-xs text-muted-foreground mb-2">{f.description}</p>}
+                    {f.daily_tasks && <p className="text-xs mb-2"><span className="font-semibold">{isAr ? "المهام: " : "Tasks: "}</span>{f.daily_tasks}</p>}
+                    {f.job_titles?.length > 0 && <div className="flex flex-wrap gap-1 mb-2">{f.job_titles.map((j, k) => <span key={k} className="px-2 py-0.5 rounded-full bg-zeus-gold/10 text-zeus-brightgold text-[10px]">{j}</span>)}</div>}
+                    {f.skills?.length > 0 && <div className="flex flex-wrap gap-1 mb-2">{f.skills.map((s, k) => <span key={k} className="px-2 py-0.5 rounded-full bg-secondary/40 text-[10px]">{s}</span>)}</div>}
+                    {f.pros?.length > 0 && <div className="text-[11px] text-emerald-400 mb-1">{isAr ? "مميزات: " : "Pros: "}{f.pros.join("، ")}</div>}
+                    {f.cons?.length > 0 && <div className="text-[11px] text-red-400 mb-1">{isAr ? "عيوب: " : "Cons: "}{f.cons.join("، ")}</div>}
+                    {f.why_fits && <div className="text-[11px] text-zeus-brightgold mt-2 pt-2 border-t border-border/40">{f.why_fits}</div>}
+                  </div>
+                ))}
+              </div>
+            )}
+            </>
           )}
           {step === "dna" && <DnaSummary profile={profile} isAr={isAr} Arrow={Arrow} onConfirm={async (patch) => { await updateProfile(patch); goto("goal"); }} />}
           {step === "goal" && <GoalStep recs={recs} typing={typing} onPick={pickGoal} t={t} isAr={isAr} />}

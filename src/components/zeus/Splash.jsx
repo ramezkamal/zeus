@@ -7,6 +7,11 @@ export default function Splash() {
   const [show, setShow] = useState(() => !sessionStorage.getItem("zeus_splash"));
 
   useEffect(() => {
+    const theme = localStorage.getItem("zeus_theme") || "dark";
+    document.documentElement.setAttribute("data-theme", theme);
+  }, []);
+
+  useEffect(() => {
     if (!show) return;
     const timer = setTimeout(() => {
       setShow(false);

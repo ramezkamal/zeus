@@ -74,7 +74,7 @@ export default function Companion() {
         </div>
       </div>
       <div className="zeus-glass p-5 h-[65vh] flex flex-col">
-        <ChatPanel messages={messages} onSend={send} typing={typing} placeholder={t("companion.placeholder")} companionName={profile?.companion_name} t={t} />
+        <ChatPanel messages={messages} onSend={send} typing={typing} placeholder={t("companion.placeholder")} companionName={profile?.companion_name} t={t} lang={lang} />
       </div>
     </div>
   );

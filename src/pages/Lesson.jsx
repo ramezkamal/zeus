@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, Play, BookOpen, Loader2, Lock, Bot, Brain, AlertCircle } from "lucide-react";
+import { ArrowLeft, ArrowRight, Play, BookOpen, Loader2, Lock, Bot, Brain, AlertCircle, Wrench } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useI18n } from "@/lib/i18n";
 import VideoPlayer from "@/components/zeus/lesson/VideoPlayer";
@@ -167,6 +167,43 @@ export default function Lesson() {
           <QuizPanel quiz={lesson.quiz || []} state={quizState} answers={answers} setAnswers={setAnswers} result={result}
             onStart={() => setQuizState("taking")} onSubmit={submitQuiz} onRetry={retryQuiz}
             onNext={() => nextLessonId ? nav(`/lesson/${nextLessonId}`) : nav("/schedule")} hasNext={!!nextLessonId} isAr={isAr} />
+
+          {lesson.task && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="zeus-glass p-5">
+              <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-zeus-brightgold mb-3">
+                <Wrench style={{ width: 13, height: 13 }} /> {isAr ? "مهمة عملية" : "Hands-on Task"}
+              </div>
+              <h3 className="font-heading font-bold text-lg mb-2">{lesson.task.title}</h3>
+              <p className="text-sm text-foreground/85 leading-relaxed mb-3">{lesson.task.description}</p>
+              {lesson.task.steps?.length > 0 && (
+                <div className="mb-3">
+                  <h4 className="text-xs font-bold text-zeus-brightgold mb-1.5">{isAr ? "الخطوات" : "Steps"}</h4>
+                  <ol className="list-decimal ps-4 text-sm text-muted-foreground space-y-1">
+                    {lesson.task.steps.map((s, i) => <li key={i}>{s}</li>)}
+                  </ol>
+                </div>
+              )}
+              {lesson.task.deliverables && (
+                <div className="mb-3 p-3 rounded-xl bg-secondary/30 border border-border/60">
+                  <h4 className="text-xs font-bold text-zeus-brightgold mb-1">{isAr ? "المطلوب تسليمه" : "Deliverables"}</h4>
+                  <p className="text-sm text-muted-foreground">{lesson.task.deliverables}</p>
+                </div>
+              )}
+              {lesson.task.completion_criteria && (
+                <div className="mb-3 p-3 rounded-xl bg-secondary/30 border border-border/60">
+                  <h4 className="text-xs font-bold text-zeus-brightgold mb-1">{isAr ? "معايير الإتمام" : "Completion Criteria"}</h4>
+                  <p className="text-sm text-muted-foreground">{lesson.task.completion_criteria}</p>
+                </div>
+              )}
+              {lesson.task.applied_skills?.length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                  {lesson.task.applied_skills.map((s, i) => (
+                    <span key={i} className="px-2.5 py-1 rounded-full bg-zeus-gold/10 text-zeus-brightgold text-xs">{s}</span>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          )}
         </>
       )}
 
@@ -176,7 +213,7 @@ export default function Lesson() {
         </button>
       )}
 
-      <TutorSheet open={tutorOpen} onClose={() => setTutorOpen(false)} messages={tutorMessages} onSend={sendTutor} typing={tutorTyping} isAr={isAr} t={t} />
+      <TutorSheet open={tutorOpen} onClose={() => setTutorOpen(false)} messages={tutorMessages} onSend={sendTutor} typing={tutorTyping} isAr={isAr} t={t} lang={lang} />
     </div>
   );
 }
