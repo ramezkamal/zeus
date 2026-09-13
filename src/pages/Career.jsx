@@ -4,6 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { useI18n } from "@/lib/i18n";
 import { useProfile } from "@/lib/ProfileContext";
 import { Link } from "react-router-dom";
+import ProjectIdeas from "@/components/zeus/career/ProjectIdeas";
 
 export default function Career() {
   const { t, lang, dir } = useI18n();
@@ -89,6 +90,9 @@ export default function Career() {
           <p className="text-xs text-muted-foreground">{isAr ? `${completedProjects.length} مشروع مكتمل` : `${completedProjects.length} completed projects`}</p>
         </Link>
       </div>
+
+      {/* Project Ideas */}
+      <ProjectIdeas profile={profile} lang={lang} isAr={isAr} />
 
       {/* Jobs */}
       <div>
