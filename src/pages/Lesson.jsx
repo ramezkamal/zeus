@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, Play, BookOpen, Loader2, Lock, Bot, Brain, AlertCircle, Wrench, Rocket, FolderKanban, Check } from "lucide-react";
+import { ArrowLeft, ArrowRight, Play, BookOpen, Loader2, Lock, Bot, Brain, AlertCircle, Wrench, Rocket, FolderKanban } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useI18n } from "@/lib/i18n";
 import VideoPlayer from "@/components/zeus/lesson/VideoPlayer";
