@@ -6,6 +6,7 @@ import { useI18n } from "@/lib/i18n";
 import { useProfile } from "@/lib/ProfileContext";
 import Logo from "@/components/zeus/Logo";
 import LanguageToggle from "@/components/zeus/LanguageToggle";
+import ThemeToggle from "@/components/zeus/ThemeToggle";
 import ChatPanel from "@/components/zeus/ChatPanel";
 import DnaSummary from "@/components/zeus/onboarding/DnaSummary";
 import RoadmapReveal from "@/components/zeus/onboarding/RoadmapReveal";
@@ -213,6 +214,7 @@ export default function Onboarding() {
             {isAr ? "تخطّي للوحة التحكم" : "Skip to dashboard"}
           </button>
           <LanguageToggle />
+          <ThemeToggle />
         </div>
       </header>
 
@@ -264,9 +266,19 @@ export default function Onboarding() {
                   <div key={i} className="zeus-glass p-4">
                     <h3 className="font-heading font-bold text-sm mb-2">{f.field}</h3>
                     {f.description && <p className="text-xs text-muted-foreground mb-2">{f.description}</p>}
-                    {f.daily_tasks && <p className="text-xs mb-2"><span className="font-semibold">{isAr ? "المهام: " : "Tasks: "}</span>{f.daily_tasks}</p>}
-                    {f.job_titles?.length > 0 && <div className="flex flex-wrap gap-1 mb-2">{f.job_titles.map((j, k) => <span key={k} className="px-2 py-0.5 rounded-full bg-zeus-gold/10 text-zeus-brightgold text-[10px]">{j}</span>)}</div>}
-                    {f.skills?.length > 0 && <div className="flex flex-wrap gap-1 mb-2">{f.skills.map((s, k) => <span key={k} className="px-2 py-0.5 rounded-full bg-secondary/40 text-[10px]">{s}</span>)}</div>}
+                    {f.difficulty && <p className="text-xs mb-1.5"><span className="font-semibold text-zeus-brightgold">{isAr ? "الصعوبة: " : "Difficulty: "}</span><span className="text-muted-foreground">{f.difficulty}</span></p>}
+                    {f.daily_tasks && <p className="text-xs mb-2"><span className="font-semibold">{isAr ? "المهام اليومية: " : "Daily Tasks: "}</span><span className="text-muted-foreground">{f.daily_tasks}</span></p>}
+                    {f.personality_fit && <p className="text-xs mb-2"><span className="font-semibold text-zeus-brightgold">{isAr ? "نوع الشخص المناسب: " : "Personality Fit: "}</span><span className="text-muted-foreground">{f.personality_fit}</span></p>}
+                    {f.job_titles?.length > 0 && <div className="mb-2"><span className="text-[10px] font-semibold text-muted-foreground block mb-1">{isAr ? "الوظائف" : "Job Titles"}</span><div className="flex flex-wrap gap-1">{f.job_titles.map((j, k) => <span key={k} className="px-2 py-0.5 rounded-full bg-zeus-gold/10 text-zeus-brightgold text-[10px]">{j}</span>)}</div></div>}
+                    {f.skills?.length > 0 && <div className="mb-2"><span className="text-[10px] font-semibold text-muted-foreground block mb-1">{isAr ? "المهارات" : "Skills"}</span><div className="flex flex-wrap gap-1">{f.skills.map((s, k) => <span key={k} className="px-2 py-0.5 rounded-full bg-secondary/40 text-[10px]">{s}</span>)}</div></div>}
+                    {f.tools?.length > 0 && <div className="mb-2"><span className="text-[10px] font-semibold text-muted-foreground block mb-1">{isAr ? "الأدوات" : "Tools"}</span><div className="flex flex-wrap gap-1">{f.tools.map((s, k) => <span key={k} className="px-2 py-0.5 rounded-full bg-secondary/40 text-[10px]">{s}</span>)}</div></div>}
+                    {f.example_projects?.length > 0 && (
+                      <div className="mb-2 p-2.5 rounded-xl bg-zeus-gold/5 border border-zeus-gold/15">
+                        <span className="text-[10px] font-bold text-zeus-brightgold block mb-1">{isAr ? "مثال مشروع حقيقي" : "Real Project Example"}</span>
+                        {f.example_projects.map((p, k) => <p key={k} className="text-[11px] text-muted-foreground mb-0.5">• {p}</p>)}
+                      </div>
+                    )}
+                    {f.growth_opportunities && <p className="text-xs mb-2"><span className="font-semibold text-zeus-brightgold">{isAr ? "فرص التطور: " : "Growth: "}</span><span className="text-muted-foreground">{f.growth_opportunities}</span></p>}
                     {f.pros?.length > 0 && <div className="text-[11px] text-emerald-400 mb-1">{isAr ? "مميزات: " : "Pros: "}{f.pros.join("، ")}</div>}
                     {f.cons?.length > 0 && <div className="text-[11px] text-red-400 mb-1">{isAr ? "عيوب: " : "Cons: "}{f.cons.join("، ")}</div>}
                     {f.why_fits && <div className="text-[11px] text-zeus-brightgold mt-2 pt-2 border-t border-border/40">{f.why_fits}</div>}
@@ -308,12 +320,13 @@ function NamingStep({ name, setName, onSubmit, t, isAr, Arrow }) {
 
 function GoalStep({ recs, typing, onPick, t, isAr }) {
   const [custom, setCustom] = useState("");
+  const [expanded, setExpanded] = useState(null);
   return (
     <div className="animate-fade-up">
       <div className="text-center mb-6">
         <div className="text-zeus-gold text-sm font-semibold uppercase tracking-wider mb-1">{isAr ? "تحليل الأهداف" : "Goal Analysis"}</div>
         <h2 className="font-heading font-extrabold text-2xl sm:text-3xl">{t("onb.goal.title")}</h2>
-        <p className="text-muted-foreground mt-2 text-sm">{isAr ? "زيوس حلّل مسارات ممكنة تناسبك." : "ZEUS analyzed paths that fit you."}</p>
+        <p className="text-muted-foreground mt-2 text-sm">{isAr ? "زيوس حلّل مسارات ممكنة تناسبك. دوس على أي مسار للتفاصيل." : "ZEUS analyzed paths that fit you. Tap any path for details."}</p>
       </div>
       {typing ? (
         <div className="flex flex-col items-center gap-3 py-12">
@@ -323,17 +336,42 @@ function GoalStep({ recs, typing, onPick, t, isAr }) {
       ) : recs ? (
         <div className="space-y-3">
           {recs.recommendations?.map((r, i) => (
-            <button key={i} onClick={() => onPick(r.goal)}
-              className="w-full text-start zeus-glass p-4 hover:zeus-gold-border transition group">
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="font-heading font-bold text-lg">{r.goal}</span>
-                <span className="text-zeus-gold font-bold text-xl">{r.score}%</span>
-              </div>
-              <p className="text-muted-foreground text-sm">{r.reason}</p>
-              <div className="mt-2 h-1.5 rounded-full bg-secondary/60 overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-zeus-gold to-zeus-brightgold" style={{ width: `${r.score}%` }} />
-              </div>
-            </button>
+            <div key={i} className="zeus-glass overflow-hidden">
+              <button onClick={() => setExpanded(expanded === i ? null : i)}
+                className="w-full text-start p-4 hover:zeus-gold-border transition">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="font-heading font-bold text-lg">{r.goal}</span>
+                  <span className="text-zeus-gold font-bold text-xl">{r.score}%</span>
+                </div>
+                <p className="text-muted-foreground text-sm">{r.reason}</p>
+                <div className="mt-2 h-1.5 rounded-full bg-secondary/60 overflow-hidden">
+                  <div className="h-full bg-gradient-to-r from-zeus-gold to-zeus-brightgold" style={{ width: `${r.score}%` }} />
+                </div>
+                {r.description && <p className="text-xs text-muted-foreground mt-2">{r.description}</p>}
+                <span className="text-xs text-zeus-brightgold mt-2 inline-block">{expanded === i ? (isAr ? "إخفاء التفاصيل ▲" : "Hide details ▲") : (isAr ? "عرض التفاصيل ▼" : "View details ▼")}</span>
+              </button>
+              {expanded === i && (
+                <div className="px-4 pb-4 space-y-3 animate-fade-in border-t border-border/40 pt-3">
+                  {r.nature && <Detail label={isAr ? "طبيعة العمل" : "Nature of Work"} value={r.nature} />}
+                  {r.key_skills?.length > 0 && <Chips label={isAr ? "المهارات المطلوبة" : "Key Skills"} items={r.key_skills} />}
+                  {r.tools?.length > 0 && <Chips label={isAr ? "الأدوات" : "Tools"} items={r.tools} />}
+                  {r.job_titles?.length > 0 && <Chips label={isAr ? "الوظائف" : "Job Titles"} items={r.job_titles} />}
+                  {r.example_projects?.length > 0 && (
+                    <div>
+                      <div className="text-xs font-bold text-zeus-brightgold mb-1">{isAr ? "مشاريع حقيقية" : "Real Projects"}</div>
+                      {r.example_projects.map((p, k) => <p key={k} className="text-xs text-muted-foreground mb-1">• {p}</p>)}
+                    </div>
+                  )}
+                  {r.current_level && <Detail label={isAr ? "مستواك الحالي" : "Your Current Level"} value={r.current_level} />}
+                  {r.gap && <Detail label={isAr ? "الفجوة" : "The Gap"} value={r.gap} />}
+                  {r.what_to_learn && <Detail label={isAr ? "إيه اللي محتاج تتعلمه" : "What to Learn"} value={r.what_to_learn} />}
+                  {r.why_fits && <div className="p-3 rounded-xl bg-zeus-gold/10 border border-zeus-gold/20"><p className="text-xs text-zeus-brightgold"><span className="font-bold">{isAr ? "ليه يناسبك: " : "Why it fits: "}</span>{r.why_fits}</p></div>}
+                  <button onClick={() => onPick(r.goal)} className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-zeus-gold text-zeus-midnight font-semibold text-sm hover:bg-zeus-brightgold transition shadow-gold">
+                    {isAr ? "اختار المسار ده" : "Choose this path"} <ArrowRight style={{ width: 16, height: 16 }} />
+                  </button>
+                </div>
+              )}
+            </div>
           ))}
           <div className="zeus-glass p-4">
             <label className="text-xs text-muted-foreground block mb-1.5">{isAr ? "أو اكتب هدف مختلف" : "Or type a different goal"}</label>
@@ -345,6 +383,19 @@ function GoalStep({ recs, typing, onPick, t, isAr }) {
           </div>
         </div>
       ) : <p className="text-center text-muted-foreground">{isAr ? "حصل خطأ، حدّث الصفحة" : "Something went wrong, refresh"}</p>}
+    </div>
+  );
+}
+
+function Detail({ label, value }) {
+  return <div><span className="text-xs font-bold text-zeus-brightgold">{label}: </span><span className="text-xs text-muted-foreground">{value}</span></div>;
+}
+
+function Chips({ label, items }) {
+  return (
+    <div>
+      <div className="text-xs font-bold text-zeus-brightgold mb-1">{label}</div>
+      <div className="flex flex-wrap gap-1">{items.map((s, k) => <span key={k} className="px-2 py-0.5 rounded-full bg-secondary/40 text-[10px]">{s}</span>)}</div>
     </div>
   );
 }

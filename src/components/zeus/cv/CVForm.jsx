@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Plus, Trash2, User, Mail, Phone, MapPin, Linkedin, Github, FileText, Briefcase, GraduationCap, Wrench, Languages, Award, Sparkles, Loader2, Wand2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { useProfile } from "@/lib/ProfileContext";
 
 export default function CVForm({ cv, setCv, isAr }) {
+  const { profile } = useProfile();
   const set = (k, v) => setCv({ ...cv, [k]: v });
   const setArr = (k, i, field, v) => {
     const next = [...(cv[k] || [])];
@@ -13,6 +15,13 @@ export default function CVForm({ cv, setCv, isAr }) {
   const remove = (k, i) => setCv({ ...cv, [k]: (cv[k] || []).filter((_, x) => x !== i) });
 
   const [aiLoading, setAiLoading] = useState(false);
+
+  const syncSkills = () => {
+    const profileSkills = (profile?.skill_graph || []).map((s) => ({ name: s.skill, category: s.skill }));
+    const existing = (cv.skills || []).map((s) => s.name);
+    const newSkills = profileSkills.filter((s) => !existing.includes(s.name));
+    set("skills", [...(cv.skills || []), ...newSkills]);
+  };
 
   const rewriteSummary = async () => {
     if (!cv.summary?.trim()) return;
@@ -43,8 +52,14 @@ export default function CVForm({ cv, setCv, isAr }) {
         action={<button onClick={rewriteSummary} disabled={aiLoading || !cv.summary?.trim()} className="inline-flex items-center gap-1 text-xs text-zeus-brightgold hover:text-zeus-gold disabled:opacity-50">
           {aiLoading ? <Loader2 className="animate-spin" style={{ width: 14, height: 14 }} /> : <Wand2 style={{ width: 14, height: 14 }} />} {isAr ? "إعادة صياغة" : "Rewrite"}
         </button>}>
+        <div className="text-xs text-muted-foreground mb-2 space-y-0.5">
+          <p>{isAr ? "💡 جاوب على الأسئلة دي وأنا أعيد صياغتها:" : "💡 Answer these prompts and I'll rewrite them:"}</p>
+          <p>{isAr ? "• إيه دورك الحالي وكم سنة خبرة؟" : "• Your current role and years of experience?"}</p>
+          <p>{isAr ? "• إيه أهم مهاراتك ونقاط قوتك؟" : "• Your key skills and strengths?"}</p>
+          <p>{isAr ? "• بتدور على إيه؟" : "• What are you looking for?"}</p>
+        </div>
         <textarea value={cv.summary || ""} onChange={(e) => set("summary", e.target.value)} rows={4}
-          placeholder={isAr ? "اكتب نبذة قصيرة عنك وعن أهدافك، أو اكتب نقاط وأنا أعيد صياغتها..." : "Write a short summary about you and your goals, or bullet points and I'll rewrite it..."}
+          placeholder={isAr ? "اكتب إجاباتك هنا أو نقاط مختصرة..." : "Write your answers here or bullet points..."}
           className="w-full rounded-lg bg-secondary/30 border border-border/60 px-3 py-2 text-sm focus:outline-none focus:zeus-gold-border" />
       </Card>
 
@@ -77,7 +92,11 @@ export default function CVForm({ cv, setCv, isAr }) {
         ))}
       </Card>
 
-      <Card title={isAr ? "المهارات التقنية" : "Technical Skills"} icon={Wrench} onAdd={() => add("skills", { name: "", category: isAr ? "أخرى" : "Other" })}>
+      <Card title={isAr ? "المهارات التقنية" : "Technical Skills"} icon={Wrench}
+        onAdd={() => add("skills", { name: "", category: isAr ? "أخرى" : "Other" })}
+        action={<button onClick={syncSkills} className="inline-flex items-center gap-1 text-xs text-zeus-brightgold hover:text-zeus-gold">
+          <Sparkles style={{ width: 14, height: 14 }} /> {isAr ? "مزامنة من الملف" : "Sync from Profile"}
+        </button>}>
         <div className="grid sm:grid-cols-2 gap-2.5">
           {(cv.skills || []).map((s, i) => (
             <div key={i} className="flex items-center gap-2 p-2 rounded-lg bg-secondary/20 border border-border/60">

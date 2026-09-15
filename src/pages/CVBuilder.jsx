@@ -25,20 +25,25 @@ export default function CVBuilder() {
       if (existing.length) {
         setCv(existing[0]);
       } else {
-        const skills = (profile?.skill_graph || []).map((s) => ({
-          name: s.skill,
-          level: s.level >= 70 ? "Expert" : s.level >= 40 ? "Intermediate" : "Beginner"
+        // Auto-fill from platform data
+        const skills = (profile?.skill_graph || []).map((s) => ({ name: s.skill }));
+        const userProjects = await base44.entities.Project.filter({ status: "completed" }, "-created_date", 10);
+        const projects = userProjects.map((p) => ({
+          title: p.title,
+          description: p.description || "",
+          link: p.link || ""
         }));
         const created = await base44.entities.CV.create({
-          full_name: me?.full_name || "",
+          full_name: profile?.full_name || me?.full_name || "",
           email: me?.email || "",
           title_role: profile?.goal || "",
-          summary: profile?.background || "",
+          summary: profile?.background || profile?.motivation || "",
           experiences: [],
-          education: [],
+          education: profile?.education ? [{ degree: profile.education, institution: "", start: "", end: "" }] : [],
           skills,
           languages: [],
-          certifications: []
+          certifications: [],
+          projects
         });
         setCv(created);
       }
@@ -78,7 +83,7 @@ export default function CVBuilder() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="font-heading font-extrabold text-2xl sm:text-3xl flex items-center gap-2"><FileText className="text-zeus-gold" style={{ width: 28, height: 28 }} /> {isAr ? "بنّاء السيرة الذاتية" : "CV Builder"}</h1>
-          <p className="text-muted-foreground mt-1">{isAr ? "رتّب خبراتك ومهاراتك بشكل احترافي جاهز للتقديم" : "Organize your experience and skills, submission-ready"}</p>
+          <p className="text-muted-foreground mt-1 text-sm">{isAr ? "سيرتك جاهزة للتقديم — ATS compliant، بالإنجليزي بالكامل" : "Submission-ready CV — ATS compliant, fully in English"}</p>
         </div>
         <div className="flex items-center gap-2">
           <button onClick={save} disabled={saving} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-secondary/40 border border-border/60 text-sm font-medium hover:bg-secondary/60 transition disabled:opacity-60">

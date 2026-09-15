@@ -10,6 +10,7 @@ import { useProfile } from "@/lib/ProfileContext";
 import Logo from "./Logo";
 import FloatingCompanion from "./FloatingCompanion";
 import LanguageToggle from "./LanguageToggle";
+import ThemeToggle from "./ThemeToggle";
 
 const NAV = [
   { key: "nav.home", to: "/app", icon: Home },
@@ -94,6 +95,7 @@ export default function AppShell() {
           </div>
           <div className="flex items-center gap-2">
             <LanguageToggle />
+            <ThemeToggle />
             <Link to="/notifications" className="relative p-2 rounded-full hover:bg-secondary/60 transition">
               <Bell style={{ width: 18, height: 18 }} className="text-muted-foreground" />
             </Link>

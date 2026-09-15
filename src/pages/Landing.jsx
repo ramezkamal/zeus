@@ -5,6 +5,7 @@ import { useI18n } from "@/lib/i18n";
 import { base44 } from "@/api/base44Client";
 import Logo from "@/components/zeus/Logo";
 import LanguageToggle from "@/components/zeus/LanguageToggle";
+import ThemeToggle from "@/components/zeus/ThemeToggle";
 
 const PROBLEMS = [
   { icon: Search, ar: { title: "مش عارف نقاط قوتك وضعفك", desc: "ميعرفش إيه اللي بيجيده فعلاً وإيه المهارات اللي محتاج يطوّرها." }, en: { title: "Doesn't know their strengths", desc: "Doesn't know what they excel at and what skills need development." } },
@@ -46,6 +47,7 @@ export default function Landing() {
           <Logo />
           <div className="flex items-center gap-2.5">
             <LanguageToggle />
+            <ThemeToggle />
             <button onClick={start} className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zeus-gold text-zeus-midnight text-sm font-semibold hover:bg-zeus-brightgold transition shadow-gold-sm">
               {t("landing.cta.start")} <Arrow style={{ width: 16, height: 16 }} />
             </button>

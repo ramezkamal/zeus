@@ -24,13 +24,19 @@ Analyze possible CAREER PATHS that fit this user. Return 3-5 ranked paths with:
 - key_skills: top 3-5 skills required
 - job_titles: 2-3 example job titles
 - nature: nature of the work (1 sentence)
+- tools: main tools/technologies used in this field
+- example_projects: 1-2 real project examples they would build in this field
+- current_level: where the user currently stands relative to this path
+- gap: the gap between the user's current level and what's required
+- what_to_learn: what the user needs to learn to reach employable level
+- why_fits: why this path fits the user specifically (based on their DNA)
 
 Reason from their DNA (strengths, weaknesses, time, motivation, career intent). Do not assume the literal goal is the best.
 Reply in ${profile.preferred_language === "en" ? "English" : "Egyptian Arabic"}.`;
 
     const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
       prompt,
-      model: "gpt_5_mini",
+      model: "gpt_5_4",
       response_json_schema: {
         type: "object",
         properties: {
@@ -45,7 +51,13 @@ Reply in ${profile.preferred_language === "en" ? "English" : "Egyptian Arabic"}.
                 description: { type: "string" },
                 key_skills: { type: "array", items: { type: "string" } },
                 job_titles: { type: "array", items: { type: "string" } },
-                nature: { type: "string" }
+                nature: { type: "string" },
+                tools: { type: "array", items: { type: "string" } },
+                example_projects: { type: "array", items: { type: "string" } },
+                current_level: { type: "string" },
+                gap: { type: "string" },
+                what_to_learn: { type: "string" },
+                why_fits: { type: "string" }
               },
               required: ["goal", "score", "reason"]
             }
