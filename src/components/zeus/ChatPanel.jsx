@@ -1,15 +1,37 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Send, Mic, MicOff } from "lucide-react";
+import { Send, Mic, MicOff, Volume2, VolumeX } from "lucide-react";
 
 export default function ChatPanel({ messages, onSend, typing, placeholder, companionName, t, lang }) {
   const [text, setText] = useState("");
   const [listening, setListening] = useState(false);
+  const [speakEnabled, setSpeakEnabled] = useState(false);
   const endRef = useRef(null);
   const recognitionRef = useRef(null);
+  const lastSpokenRef = useRef(null);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, typing]);
+
+  // Speak the last AI response when speak is enabled
+  useEffect(() => {
+    if (!speakEnabled || !messages.length) return;
+    const lastMsg = messages[messages.length - 1];
+    if (lastMsg.role === "assistant" && lastMsg.content !== lastSpokenRef.current) {
+      lastSpokenRef.current = lastMsg.content;
+      speak(lastMsg.content);
+    }
+  }, [messages, speakEnabled]);
+
+  const speak = (content) => {
+    if (!("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(content);
+    utter.lang = lang === "ar" ? "ar-EG" : "en-US";
+    utter.rate = 1;
+    utter.pitch = 1;
+    window.speechSynthesis.speak(utter);
+  };
 
   const startListening = () => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -32,6 +54,13 @@ export default function ChatPanel({ messages, onSend, typing, placeholder, compa
   const stopListening = () => {
     recognitionRef.current?.stop();
     setListening(false);
+  };
+
+  const toggleSpeak = () => {
+    if (speakEnabled) {
+      window.speechSynthesis?.cancel();
+    }
+    setSpeakEnabled(!speakEnabled);
   };
 
   const submit = (e) => {
@@ -83,6 +112,13 @@ export default function ChatPanel({ messages, onSend, typing, placeholder, compa
           placeholder={listening ? (lang === "ar" ? "بتسمع..." : "Listening...") : placeholder}
           className="flex-1 px-4 py-3 rounded-full bg-card border border-border/60 focus:zeus-gold-border outline-none text-sm transition"
         />
+        <button type="button" onClick={toggleSpeak}
+          className={`w-11 h-11 shrink-0 rounded-full flex items-center justify-center transition ${
+            speakEnabled ? "bg-zeus-gold/20 text-zeus-gold border border-zeus-gold/50" : "bg-card border border-border/60 text-muted-foreground hover:text-zeus-gold"
+          }`}
+          title={lang === "ar" ? "رد صوتي" : "Voice replies"}>
+          {speakEnabled ? <Volume2 style={{ width: 18, height: 18 }} /> : <VolumeX style={{ width: 18, height: 18 }} />}
+        </button>
         <button type="button" onClick={listening ? stopListening : startListening}
           className={`w-11 h-11 shrink-0 rounded-full flex items-center justify-center transition ${
             listening ? "bg-red-500 text-white animate-pulse" : "bg-card border border-border/60 text-muted-foreground hover:text-zeus-gold"

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, Play, BookOpen, Loader2, Lock, Bot, Brain, AlertCircle, Wrench } from "lucide-react";
+import { ArrowLeft, ArrowRight, Play, BookOpen, Loader2, Lock, Bot, Brain, AlertCircle, Wrench, Rocket, FolderKanban, Check } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useI18n } from "@/lib/i18n";
 import VideoPlayer from "@/components/zeus/lesson/VideoPlayer";
@@ -109,6 +109,8 @@ export default function Lesson() {
     </div>
   );
 
+  const isStageProject = lesson.node_id?.startsWith("stage_project_");
+
   return (
     <div dir={dir} className="space-y-5 pb-20">
       <div className="flex items-center gap-3">
@@ -116,7 +118,10 @@ export default function Lesson() {
           {isAr ? <ArrowRight style={{ width: 18, height: 18 }} /> : <ArrowLeft style={{ width: 18, height: 18 }} />}
         </button>
         <div className="flex-1 min-w-0">
-          <div className="text-xs text-zeus-brightgold font-semibold">{isAr ? `المرحلة ${lesson.phase}` : `Phase ${lesson.phase}`}</div>
+          <div className="text-xs text-zeus-brightgold font-semibold flex items-center gap-1">
+            {isStageProject ? <Rocket style={{ width: 12, height: 12 }} /> : null}
+            {isStageProject ? (isAr ? `مشروع المرحلة ${lesson.phase}` : `Stage Project · Phase ${lesson.phase}`) : (isAr ? `المرحلة ${lesson.phase}` : `Phase ${lesson.phase}`)}
+          </div>
           <h1 className="font-heading font-extrabold text-xl sm:text-2xl truncate">{lesson.node_title}</h1>
         </div>
       </div>
@@ -124,7 +129,7 @@ export default function Lesson() {
       {preparing ? (
         <div className="zeus-glass p-10 text-center">
           <Loader2 className="text-zeus-gold animate-spin mx-auto mb-4" style={{ width: 32, height: 32 }} />
-          <p className="text-muted-foreground text-sm">{isAr ? "بجهّز محتوى الدرس ده..." : "Preparing this lesson's content..."}</p>
+          <p className="text-muted-foreground text-sm">{isStageProject ? (isAr ? "بجهّز مشروع المرحلة..." : "Preparing stage project...") : (isAr ? "بجهّز محتوى الدرس ده..." : "Preparing this lesson's content...")}</p>
         </div>
       ) : prepareError ? (
         <div className="zeus-glass p-8 text-center">
@@ -137,32 +142,47 @@ export default function Lesson() {
           {lesson.summary && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="zeus-glass p-4">
               <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-zeus-brightgold mb-2">
-                <Brain style={{ width: 13, height: 13 }} /> {isAr ? "ملخص الدرس" : "Lesson Summary"}
+                {isStageProject ? <FolderKanban style={{ width: 13, height: 13 }} /> : <Brain style={{ width: 13, height: 13 }} />}
+                {isStageProject ? (isAr ? "نظرة عامة على المشروع" : "Project Overview") : (isAr ? "ملخص الدرس" : "Lesson Summary")}
               </div>
               <p className="text-sm text-foreground/85 leading-relaxed">{lesson.summary}</p>
             </motion.div>
           )}
 
-          <div className="inline-flex p-1 rounded-full bg-card/70 border border-border/60">
-            <button onClick={() => setMode("video")} className={`px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-1.5 transition ${mode === "video" ? "bg-zeus-gold text-zeus-midnight shadow-gold-sm" : "text-muted-foreground"}`}>
-              <Play style={{ width: 13, height: 13 }} /> {isAr ? "فيديو" : "Video"}
-            </button>
-            <button onClick={() => setMode("reading")} className={`px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-1.5 transition ${mode === "reading" ? "bg-zeus-gold text-zeus-midnight shadow-gold-sm" : "text-muted-foreground"}`}>
-              <BookOpen style={{ width: 13, height: 13 }} /> {isAr ? "قراءة" : "Reading"}
-            </button>
-          </div>
-
-          <motion.div key={mode} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-            {mode === "video" ? (
-              lesson.video_url ? <VideoPlayer url={lesson.video_url} title={lesson.video_title} /> : (
-                <div className="zeus-glass p-8 text-center"><p className="text-muted-foreground text-sm">{isAr ? "الفيديو لسه بيتجهّز..." : "Video is being prepared..."}</p></div>
-              )
-            ) : (
+          {/* Stage Project: no video tab, just reading content */}
+          {isStageProject ? (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
               <div className="zeus-glass p-5">
-                {lesson.reading_content ? <ReadingView content={lesson.reading_content} /> : <p className="text-muted-foreground text-sm">{isAr ? "المحتوى المكتوب لسه بيتجهّز..." : "Reading content is being prepared..."}</p>}
+                {lesson.reading_content ? <ReadingView content={lesson.reading_content} /> : <p className="text-muted-foreground text-sm">{isAr ? "المحتوى بيتجهّز..." : "Content is being prepared..."}</p>}
               </div>
-            )}
-          </motion.div>
+            </motion.div>
+          ) : (
+            <>
+              <div className="inline-flex p-1 rounded-full bg-card/70 border border-border/60">
+                <button onClick={() => setMode("video")} className={`px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-1.5 transition ${mode === "video" ? "bg-zeus-gold text-zeus-midnight shadow-gold-sm" : "text-muted-foreground"}`}>
+                  <Play style={{ width: 13, height: 13 }} /> {isAr ? "فيديو" : "Video"}
+                </button>
+                <button onClick={() => setMode("reading")} className={`px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-1.5 transition ${mode === "reading" ? "bg-zeus-gold text-zeus-midnight shadow-gold-sm" : "text-muted-foreground"}`}>
+                  <BookOpen style={{ width: 13, height: 13 }} /> {isAr ? "قراءة" : "Reading"}
+                </button>
+              </div>
+
+              <motion.div key={mode} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+                {mode === "video" ? (
+                  lesson.video_url ? <VideoPlayer url={lesson.video_url} title={lesson.video_title} /> : (
+                    <div className="zeus-glass p-8 text-center">
+                      <Play className="text-muted-foreground/40 mx-auto mb-3" style={{ width: 32, height: 32 }} />
+                      <p className="text-muted-foreground text-sm">{isAr ? "الفيديو لسه بيتجهّز..." : "Video is being prepared..."}</p>
+                    </div>
+                  )
+                ) : (
+                  <div className="zeus-glass p-5">
+                    {lesson.reading_content ? <ReadingView content={lesson.reading_content} /> : <p className="text-muted-foreground text-sm">{isAr ? "المحتوى المكتوب لسه بيتجهّز..." : "Reading content is being prepared..."}</p>}
+                  </div>
+                )}
+              </motion.div>
+            </>
+          )}
 
           <QuizPanel quiz={lesson.quiz || []} state={quizState} answers={answers} setAnswers={setAnswers} result={result}
             onStart={() => setQuizState("taking")} onSubmit={submitQuiz} onRetry={retryQuiz}
@@ -171,7 +191,8 @@ export default function Lesson() {
           {lesson.task && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="zeus-glass p-5">
               <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-zeus-brightgold mb-3">
-                <Wrench style={{ width: 13, height: 13 }} /> {isAr ? "مهمة عملية" : "Hands-on Task"}
+                {isStageProject ? <Rocket style={{ width: 13, height: 13 }} /> : <Wrench style={{ width: 13, height: 13 }} />}
+                {isStageProject ? (isAr ? "تفاصيل المشروع" : "Project Details") : (isAr ? "مهمة عملية" : "Hands-on Task")}
               </div>
               <h3 className="font-heading font-bold text-lg mb-2">{lesson.task.title}</h3>
               <p className="text-sm text-foreground/85 leading-relaxed mb-3">{lesson.task.description}</p>
@@ -209,7 +230,7 @@ export default function Lesson() {
 
       {!preparing && !prepareError && (
         <button onClick={() => setTutorOpen(true)} className="fixed bottom-24 end-4 z-30 w-14 h-14 rounded-full bg-zeus-gold text-zeus-midnight shadow-gold flex items-center justify-center hover:bg-zeus-brightgold transition">
-          <Bot style={{ width: 24, height: 24 }} />
+          {isStageProject ? <FolderKanban style={{ width: 24, height: 24 }} /> : <Bot style={{ width: 24, height: 24 }} />}
         </button>
       )}
 

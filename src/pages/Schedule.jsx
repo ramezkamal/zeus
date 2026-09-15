@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Calendar, Loader2, Lock, CheckCircle2, Play, Sparkles, Plus } from "lucide-react";
+import { Calendar, Loader2, Lock, CheckCircle2, Play, Sparkles, Plus, FolderKanban, Rocket } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useI18n } from "@/lib/i18n";
 
@@ -51,7 +51,7 @@ export default function Schedule() {
   const completed = lessons.filter(l => l.status === "completed").length;
   const total = lessons.length;
   const progress = total ? Math.round((completed / total) * 100) : 0;
-  const weeks = [...new Set(lessons.map(l => l.week))].sort((a, b) => a - b);
+  const phases = [...new Set(lessons.map(l => l.phase))].sort((a, b) => a - b);
 
   return (
     <div dir={dir} className="space-y-5">
@@ -59,7 +59,7 @@ export default function Schedule() {
         <h1 className="font-heading font-extrabold text-2xl sm:text-3xl flex items-center gap-2">
           <Calendar className="text-zeus-gold" style={{ width: 26, height: 26 }} /> {isAr ? "جدولك الدراسي" : "Your Study Schedule"}
         </h1>
-        <p className="text-muted-foreground mt-1 text-sm">{isAr ? "الدروس موزّعة على أيامك المتاحة" : "Lessons distributed across your available days"}</p>
+        <p className="text-muted-foreground mt-1 text-sm">{isAr ? "الدروس موزّعة على مراحل وأيامك المتاحة" : "Lessons organized by stages and your available days"}</p>
       </motion.div>
 
       {!roadmapId ? (
@@ -79,7 +79,7 @@ export default function Schedule() {
         <>
           <div className="zeus-glass p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium">{isAr ? "تقدّمك" : "Your progress"}</span>
+              <span className="text-sm font-medium">{isAr ? "تقدّمك الكلي" : "Overall progress"}</span>
               <span className="text-sm font-bold text-zeus-brightgold">{completed}/{total}</span>
             </div>
             <div className="h-2 rounded-full bg-secondary/60 overflow-hidden">
@@ -87,33 +87,70 @@ export default function Schedule() {
             </div>
           </div>
 
-          {weeks.map((week, wi) => (
-            <motion.div key={week} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: wi * 0.1 }}>
-              <h2 className="font-heading font-bold text-sm uppercase tracking-wider text-muted-foreground mb-2.5">{isAr ? `الأسبوع ${week}` : `Week ${week}`}</h2>
-              <div className="space-y-2">
-                {lessons.filter(l => l.week === week).map((lesson) => {
-                  const day = DAYS[lesson.day] || { ar: lesson.day, en: lesson.day };
-                  const isAvailable = lesson.status === "available";
-                  const isCompleted = lesson.status === "completed";
-                  const isLocked = lesson.status === "locked";
-                  return (
-                    <button key={lesson.id} onClick={() => (isAvailable || isCompleted) && nav(`/lesson/${lesson.id}`)}
-                      disabled={isLocked}
-                      className={`w-full text-start zeus-glass p-4 flex items-center gap-3 transition ${isAvailable ? "zeus-gold-border cursor-pointer" : isLocked ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:border-zeus-gold/30"}`}>
-                      <div className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${isCompleted ? "bg-zeus-gold text-zeus-midnight" : isAvailable ? "bg-zeus-gold/15 text-zeus-brightgold" : "bg-secondary/40 text-muted-foreground"}`}>
-                        {isCompleted ? <CheckCircle2 style={{ width: 18, height: 18 }} /> : isLocked ? <Lock style={{ width: 16, height: 16 }} /> : <Play style={{ width: 16, height: 16 }} />}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="font-medium truncate">{lesson.node_title}</div>
-                        <div className="text-xs text-muted-foreground mt-0.5">{isAr ? day.ar : day.en} · {isAr ? `المرحلة ${lesson.phase}` : `Phase ${lesson.phase}`}</div>
-                      </div>
-                      {isAvailable && <span className="text-[10px] px-2 py-1 rounded-full bg-zeus-gold/15 text-zeus-brightgold font-medium">{isAr ? "ابدأ" : "Start"}</span>}
-                    </button>
-                  );
-                })}
-              </div>
-            </motion.div>
-          ))}
+          {phases.map((phase, pi) => {
+            const phaseLessons = lessons.filter(l => l.phase === phase);
+            const phaseCompleted = phaseLessons.filter(l => l.status === "completed").length;
+            const phaseProgress = phaseLessons.length ? Math.round((phaseCompleted / phaseLessons.length) * 100) : 0;
+            const stageProject = phaseLessons.find(l => l.node_id?.startsWith("stage_project_"));
+            const regularLessons = phaseLessons.filter(l => !l.node_id?.startsWith("stage_project_"));
+
+            return (
+              <motion.div key={phase} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: pi * 0.1 }}>
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="font-heading font-bold text-sm uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                    <span className="w-7 h-7 rounded-lg bg-zeus-gold/15 text-zeus-brightgold flex items-center justify-center text-xs font-bold">{phase}</span>
+                    {isAr ? `المرحلة ${phase}` : `Phase ${phase}`}
+                  </h2>
+                  <span className="text-xs text-muted-foreground">{phaseCompleted}/{phaseLessons.length}</span>
+                </div>
+                <div className="h-1 rounded-full bg-secondary/40 overflow-hidden mb-3">
+                  <div className="h-full bg-gradient-to-r from-zeus-gold to-zeus-brightgold transition-all" style={{ width: `${phaseProgress}%` }} />
+                </div>
+                <div className="space-y-2">
+                  {regularLessons.map((lesson) => {
+                    const day = DAYS[lesson.day] || { ar: lesson.day, en: lesson.day };
+                    const isAvailable = lesson.status === "available";
+                    const isCompleted = lesson.status === "completed";
+                    const isLocked = lesson.status === "locked";
+                    return (
+                      <button key={lesson.id} onClick={() => (isAvailable || isCompleted) && nav(`/lesson/${lesson.id}`)}
+                        disabled={isLocked}
+                        className={`w-full text-start zeus-glass p-4 flex items-center gap-3 transition ${isAvailable ? "zeus-gold-border cursor-pointer" : isLocked ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:border-zeus-gold/30"}`}>
+                        <div className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${isCompleted ? "bg-zeus-gold text-zeus-midnight" : isAvailable ? "bg-zeus-gold/15 text-zeus-brightgold" : "bg-secondary/40 text-muted-foreground"}`}>
+                          {isCompleted ? <CheckCircle2 style={{ width: 18, height: 18 }} /> : isLocked ? <Lock style={{ width: 16, height: 16 }} /> : <Play style={{ width: 16, height: 16 }} />}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium truncate">{lesson.node_title}</div>
+                          <div className="text-xs text-muted-foreground mt-0.5">{isAr ? day.ar : day.en} · {isAr ? `أسبوع ${lesson.week}` : `Week ${lesson.week}`}</div>
+                        </div>
+                        {isAvailable && <span className="text-[10px] px-2 py-1 rounded-full bg-zeus-gold/15 text-zeus-brightgold font-medium">{isAr ? "ابدأ" : "Start"}</span>}
+                      </button>
+                    );
+                  })}
+                  {stageProject && (
+                    <button onClick={() => (stageProject.status === "available" || stageProject.status === "completed") && nav(`/lesson/${stageProject.id}`)}
+                      disabled={stageProject.status === "locked"}
+                      className={`w-full text-start p-4 flex items-center gap-3 transition rounded-2xl border-2 border-dashed ${stageProject.status === "available" ? "border-zeus-gold/50 bg-zeus-gold/5 cursor-pointer hover:bg-zeus-gold/10" : stageProject.status === "completed" ? "border-zeus-gold/40 bg-zeus-gold/5 cursor-pointer" : "border-border/40 opacity-50 cursor-not-allowed"}`}>
+                        <div className={`shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${stageProject.status === "completed" ? "bg-zeus-gold text-zeus-midnight" : "bg-zeus-gold/15 text-zeus-brightgold"}`}>
+                          {stageProject.status === "completed" ? <CheckCircle2 style={{ width: 18, height: 18 }} /> : <FolderKanban style={{ width: 18, height: 18 }} />}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-heading font-bold text-sm flex items-center gap-1.5">
+                            <Rocket style={{ width: 13, height: 13, color: "var(--zeus-gold)" }} />
+                            {isAr ? `مشروع المرحلة ${phase}` : `Stage Project: Phase ${phase}`}
+                          </div>
+                          <div className="text-xs text-muted-foreground mt-0.5">
+                            {stageProject.status === "locked" ? (isAr ? "أكمل كل دروس المرحلة الأول" : "Complete all phase lessons first") :
+                             stageProject.status === "completed" ? (isAr ? "مكتمل ✓" : "Completed ✓") :
+                             (isAr ? "جاهز للبدء" : "Ready to start")}
+                          </div>
+                        </div>
+                      </button>
+                  )}
+                </div>
+              </motion.div>
+            );
+          })}
         </>
       )}
     </div>

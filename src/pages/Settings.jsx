@@ -31,6 +31,15 @@ export default function Settings() {
     })();
   }, []);
 
+  const updateAccent = async (color) => {
+    try {
+      if (cv) {
+        const updated = await base44.entities.CV.update(cv.id, { accent_color: color });
+        setCv(updated);
+      }
+    } catch (e) {}
+  };
+
   const uploadFile = async (file, field) => {
     setUploading(field);
     try {
@@ -118,6 +127,20 @@ export default function Settings() {
             {isAr ? "رفع صورة" : "Upload photo"}
             <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files[0] && uploadFile(e.target.files[0], "photo_url")} />
           </label>
+        </div>
+      </div>
+
+      <div className="zeus-glass p-5">
+        <div className="flex items-center gap-2 mb-3"><Palette className="text-zeus-gold" style={{ width: 18, height: 18 }} /><h2 className="font-heading font-bold text-sm">{isAr ? "لون البورتفوليو" : "Portfolio Accent Color"}</h2></div>
+        <p className="text-xs text-muted-foreground mb-3">{isAr ? "اختار لون بورتفوليوك العام" : "Choose your portfolio's accent color"}</p>
+        <div className="flex items-center gap-3">
+          <input type="color" value={cv?.accent_color || "#FFC107"} onChange={(e) => updateAccent(e.target.value)}
+            className="w-14 h-14 rounded-xl cursor-pointer border border-border/60 bg-transparent" />
+          <div className="flex flex-wrap gap-2">
+            {["#FFC107", "#3B82F6", "#8B5CF6", "#10B981", "#EF4444", "#EC4899", "#F97316", "#06B6D4"].map((c) => (
+              <button key={c} onClick={() => updateAccent(c)} className={`w-8 h-8 rounded-full border-2 transition ${(cv?.accent_color || "#FFC107") === c ? "border-foreground scale-110" : "border-transparent hover:scale-105"}`} style={{ background: c }} />
+            ))}
+          </div>
         </div>
       </div>
 
