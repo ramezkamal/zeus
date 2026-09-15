@@ -276,7 +276,7 @@ export default function Onboarding() {
             )}
             </>
           )}
-          {step === "dna" && <DnaSummary profile={profile} isAr={isAr} Arrow={Arrow} onConfirm={async (patch) => { await updateProfile(patch); goto("goal"); }} />}
+          {step === "dna" && <DnaSummary profile={profile} isAr={isAr} Arrow={Arrow} onConfirm={() => goto("goal")} />}
           {step === "goal" && <GoalStep recs={recs} typing={typing} onPick={pickGoal} t={t} isAr={isAr} />}
           {step === "assessment" && <AssessmentStep skills={keySkills} levels={skillLevels} setLevels={setSkillLevels} skillsText={skillsText} setSkillsText={setSkillsText} onSubmit={submitSkills} t={t} isAr={isAr} Arrow={Arrow} />}
           {step === "roadmap" && <RoadmapReveal preview={roadmapPreview} typing={typing} building={building} onBuild={buildRoadmap} isAr={isAr} companionName={companionName} />}

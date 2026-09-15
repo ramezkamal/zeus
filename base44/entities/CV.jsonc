@@ -27,9 +27,6 @@
     "github": {
       "type": "string"
     },
-    "website": {
-      "type": "string"
-    },
     "summary": {
       "type": "string"
     },
@@ -155,7 +152,7 @@
     },
     "accent_color": {
       "type": "string",
-      "default": "gold"
+      "default": "#FFC107"
     },
     "photo_url": {
       "type": "string"

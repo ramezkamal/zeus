@@ -2,6 +2,9 @@
   "name": "LearningProfile",
   "type": "object",
   "properties": {
+    "full_name": {
+      "type": "string"
+    },
     "companion_name": {
       "type": "string",
       "default": "Zeus Companion"

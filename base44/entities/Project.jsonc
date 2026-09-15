@@ -11,6 +11,15 @@
     "description": {
       "type": "string"
     },
+    "link": {
+      "type": "string"
+    },
+    "images": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
     "requirements": {
       "type": "array",
       "items": {
