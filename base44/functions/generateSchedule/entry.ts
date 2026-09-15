@@ -34,16 +34,44 @@ export default async function(req) {
 
     await base44.entities.Lesson.deleteMany({ roadmap_id: roadmapId });
 
-    const lessons = nodes.map((node, i) => ({
-      roadmap_id: roadmapId,
-      node_id: node.id,
-      node_title: node.title,
-      phase: node.phase || 1,
-      day: uniqueDays[i % uniqueDays.length],
-      week: Math.floor(i / uniqueDays.length) + 1,
-      order: i,
-      status: i === 0 ? 'available' : 'locked'
-    }));
+    const phases = [...new Set(nodes.map(n => n.phase || 1))].sort((a, b) => a - b);
+    const lessons = [];
+    let order = 0;
+
+    phases.forEach(phase => {
+      const phaseNodes = nodes.filter(n => (n.phase || 1) === phase);
+      phaseNodes.forEach(node => {
+        const hours = node.estimated_hours || 4;
+        const numLessons = Math.min(Math.max(1, Math.ceil(hours / 3)), 4);
+        for (let i = 0; i < numLessons; i++) {
+          lessons.push({
+            roadmap_id: roadmapId,
+            node_id: node.id,
+            node_title: numLessons > 1 ? `${node.title} (${i + 1}/${numLessons})` : node.title,
+            phase: phase,
+            day: uniqueDays[order % uniqueDays.length],
+            week: Math.floor(order / uniqueDays.length) + 1,
+            order: order,
+            status: order === 0 ? 'available' : 'locked'
+          });
+          order++;
+        }
+      });
+      // Stage project at end of each phase
+      if (phaseNodes.length > 0) {
+        lessons.push({
+          roadmap_id: roadmapId,
+          node_id: `stage_project_${phase}`,
+          node_title: `Stage Project: Phase ${phase}`,
+          phase: phase,
+          day: uniqueDays[order % uniqueDays.length],
+          week: Math.floor(order / uniqueDays.length) + 1,
+          order: order,
+          status: 'locked'
+        });
+        order++;
+      }
+    });
 
     const created = await base44.entities.Lesson.bulkCreate(lessons);
     return Response.json({ success: true, lessons: created });

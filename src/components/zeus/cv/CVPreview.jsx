@@ -9,10 +9,9 @@ export default function CVPreview({ cv, isAr, previewRef }) {
   const softSkills = cv.soft_skills || [];
   const projects = cv.projects || [];
 
-  // Group skills by category
   const skillCategories = {};
   skills.forEach((s) => {
-    const cat = s.category || (isAr ? "أخرى" : "Other");
+    const cat = s.category || "Other";
     if (!skillCategories[cat]) skillCategories[cat] = [];
     skillCategories[cat].push(s.name);
   });
@@ -21,7 +20,6 @@ export default function CVPreview({ cv, isAr, previewRef }) {
 
   return (
     <div ref={previewRef} className="bg-white text-black overflow-hidden" style={{ minHeight: 400, fontFamily: "'Georgia', 'Times New Roman', serif" }}>
-      {/* Header */}
       <div className="px-8 py-6 border-b-2 border-black">
         <h1 className="text-3xl font-bold tracking-tight text-black">{cv.full_name || "—"}</h1>
         {cv.title_role && <p className="text-sm font-medium mt-1 text-gray-700">{cv.title_role}</p>}
@@ -36,13 +34,13 @@ export default function CVPreview({ cv, isAr, previewRef }) {
 
       <div className="px-8 py-5 space-y-4">
         {cv.summary && (
-          <Section title={isAr ? "ملخص مهني" : "Professional Summary"}>
+          <Section title="Professional Summary">
             <p className="text-[12px] leading-relaxed text-gray-800">{cv.summary}</p>
           </Section>
         )}
 
         {Object.keys(skillCategories).length > 0 && (
-          <Section title={isAr ? "المهارات التقنية" : "Technical Skills"}>
+          <Section title="Technical Skills">
             <div className="space-y-1">
               {Object.entries(skillCategories).map(([cat, sks]) => (
                 <div key={cat} className="text-[12px]">
@@ -55,13 +53,13 @@ export default function CVPreview({ cv, isAr, previewRef }) {
         )}
 
         {softSkills.length > 0 && (
-          <Section title={isAr ? "المهارات الشخصية" : "Soft Skills"}>
+          <Section title="Soft Skills">
             <p className="text-[12px] text-gray-800">{softSkills.join(", ")}</p>
           </Section>
         )}
 
         {exp.length > 0 && (
-          <Section title={isAr ? "الخبرات" : "Experience"}>
+          <Section title="Experience">
             <div className="space-y-3">
               {exp.map((e, i) => (
                 <div key={i}>
@@ -83,7 +81,7 @@ export default function CVPreview({ cv, isAr, previewRef }) {
         )}
 
         {projects.length > 0 && (
-          <Section title={isAr ? "المشاريع" : "Projects"}>
+          <Section title="Projects">
             <div className="space-y-2">
               {projects.map((p, i) => (
                 <div key={i}>
@@ -97,7 +95,7 @@ export default function CVPreview({ cv, isAr, previewRef }) {
         )}
 
         {edu.length > 0 && (
-          <Section title={isAr ? "التعليم" : "Education"}>
+          <Section title="Education">
             <div className="space-y-2">
               {edu.map((e, i) => (
                 <div key={i} className="flex justify-between items-baseline gap-2">
@@ -113,7 +111,7 @@ export default function CVPreview({ cv, isAr, previewRef }) {
         )}
 
         {certList.length > 0 && (
-          <Section title={isAr ? "الشهادات" : "Certifications"}>
+          <Section title="Certifications">
             <div className="space-y-1">
               {certList.map((c, i) => (
                 <div key={i} className="text-[12px]">
@@ -128,7 +126,7 @@ export default function CVPreview({ cv, isAr, previewRef }) {
         )}
 
         {langs.length > 0 && (
-          <Section title={isAr ? "اللغات" : "Languages"}>
+          <Section title="Languages">
             <p className="text-[12px] text-gray-800">{langs.map((l) => `${l.name} (${l.level})`).join(" · ")}</p>
           </Section>
         )}

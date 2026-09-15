@@ -17,7 +17,7 @@ export default async function(req) {
 
     const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
       prompt: `${ZEUS_SYSTEM}\n\n${discoveryPrompt(companionName, lang, profile)}\n\n=== CONVERSATION SO FAR ===\n${transcript}\n\n=== YOUR TURN ===\nRespond to the LAST user message above. Return JSON only.`,
-      model: "claude-sonnet-5",
+      model: "gpt_5_4",
       response_json_schema: {
         type: "object",
         properties: {

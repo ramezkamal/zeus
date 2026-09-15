@@ -4,7 +4,10 @@ import { motion, AnimatePresence } from "framer-motion";
 const ROBOT_URL = "https://media.base44.com/images/public/6a8c28083b820a6f17848b0c/a705301f8_image-removebg-preview.png";
 
 export default function Splash() {
-  const [show, setShow] = useState(() => !sessionStorage.getItem("zeus_splash"));
+  const [show, setShow] = useState(() => {
+    if (typeof window !== "undefined" && window.location.pathname.startsWith("/portfolio/")) return false;
+    return !sessionStorage.getItem("zeus_splash");
+  });
 
   useEffect(() => {
     const theme = localStorage.getItem("zeus_theme") || "dark";

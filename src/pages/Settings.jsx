@@ -12,6 +12,8 @@ export default function Settings() {
   const isAr = lang === "ar";
   const nav = useNavigate();
   const [name, setName] = useState(profile?.companion_name || "");
+  const [fullName, setFullName] = useState(profile?.full_name || "");
+  const [savingName, setSavingName] = useState(false);
   const [saving, setSaving] = useState(false);
   const [theme, setTheme] = useState(() => localStorage.getItem("zeus_theme") || "dark");
   const [cv, setCv] = useState(null);
@@ -47,6 +49,12 @@ export default function Settings() {
     setSaving(false);
   };
 
+  const saveFullName = async () => {
+    setSavingName(true);
+    await updateProfile({ full_name: fullName.trim() });
+    setSavingName(false);
+  };
+
   const logout = async () => { await base44.auth.logout(); nav("/"); };
 
   return (
@@ -66,6 +74,17 @@ export default function Settings() {
           </button>
           <button onClick={() => setTheme("light")} className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition ${theme === "light" ? "bg-zeus-gold text-zeus-midnight" : "bg-secondary/30 border border-border/60"}`}>
             {isAr ? "فاتح" : "Light"}
+          </button>
+        </div>
+      </div>
+
+      <div className="zeus-glass p-5">
+        <div className="flex items-center gap-2 mb-3"><User className="text-zeus-gold" style={{ width: 18, height: 18 }} /><h2 className="font-heading font-bold text-sm">{isAr ? "الاسم الكامل" : "Full Name"}</h2></div>
+        <div className="flex gap-2">
+          <input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder={isAr ? "اكتب اسمك الكامل" : "Enter your full name"}
+            className="flex-1 px-4 py-3 rounded-xl bg-card border border-border/60 focus:zeus-gold-border outline-none text-sm" />
+          <button onClick={saveFullName} disabled={savingName} className="px-5 rounded-xl bg-zeus-gold text-zeus-midnight font-medium text-sm hover:bg-zeus-brightgold transition disabled:opacity-50 inline-flex items-center gap-1.5 shrink-0">
+            {savingName ? <Loader2 className="animate-spin" style={{ width: 16, height: 16 }} /> : <Check style={{ width: 16, height: 16 }} />} {t("common.save")}
           </button>
         </div>
       </div>

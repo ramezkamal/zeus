@@ -42,33 +42,33 @@
   }
 
   [data-theme="light"] {
-    --background: 0 0% 100%;
-    --foreground: 223 49% 14%;
-    --card: 220 14% 98%;
-    --card-foreground: 223 49% 14%;
+    --background: 210 20% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
     --popover: 0 0% 100%;
-    --popover-foreground: 223 49% 14%;
-    --primary: 45 100% 51%;
-    --primary-foreground: 223 49% 14%;
-    --secondary: 220 14% 95%;
-    --secondary-foreground: 223 49% 14%;
-    --muted: 220 14% 93%;
-    --muted-foreground: 220 9% 42%;
-    --accent: 45 100% 82%;
-    --accent-foreground: 223 49% 14%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 45 96% 48%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 220 14% 94%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 220 14% 92%;
+    --muted-foreground: 220 9% 38%;
+    --accent: 45 96% 88%;
+    --accent-foreground: 222 47% 11%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 13% 86%;
-    --input: 220 13% 88%;
-    --ring: 45 100% 51%;
-    --zeus-midnight: 0 0% 100%;
-    --zeus-navy: 220 14% 96%;
-    --zeus-steel: 220 9% 55%;
-    --zeus-gold: 45 100% 45%;
-    --zeus-orange: 38 92% 45%;
-    --zeus-brightgold: 45 100% 40%;
-    --zeus-softgold: 45 80% 90%;
-    --zeus-cloud: 223 49% 14%;
+    --border: 220 13% 82%;
+    --input: 220 13% 84%;
+    --ring: 45 96% 48%;
+    --zeus-midnight: 210 20% 98%;
+    --zeus-navy: 0 0% 100%;
+    --zeus-steel: 220 9% 45%;
+    --zeus-gold: 45 96% 48%;
+    --zeus-orange: 38 92% 48%;
+    --zeus-brightgold: 38 85% 42%;
+    --zeus-softgold: 45 80% 92%;
+    --zeus-cloud: 222 47% 11%;
   }
 }
 
@@ -85,7 +85,10 @@
     background-attachment: fixed;
   }
   [data-theme="light"] body {
-    background-image: none;
+    background-image:
+      radial-gradient(50rem 50rem at 80% -10%, rgba(255, 193, 7, 0.06), transparent 60%),
+      radial-gradient(40rem 40rem at -10% 10%, rgba(20, 33, 61, 0.04), transparent 50%);
+    background-attachment: fixed;
   }
   h1, h2, h3, h4, h5 { @apply font-heading; }
   ::selection { background: rgba(255, 193, 7, 0.4); color: #0D1426; }

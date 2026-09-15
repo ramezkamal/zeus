@@ -1,41 +1,77 @@
 import React, { useState, useEffect } from "react";
-import { Rocket, Loader2, Plus, CheckCircle2, Circle, Wrench } from "lucide-react";
+import { Plus, Loader2, Wand2, X, Upload, ExternalLink, Trash2, Image as ImageIcon } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useI18n } from "@/lib/i18n";
 import { useProfile } from "@/lib/ProfileContext";
+import { Image } from "@/components/ui/image";
 
 export default function Projects() {
   const { t, lang, dir } = useI18n();
   const { profile } = useProfile();
   const isAr = lang === "ar";
-  const [roadmap, setRoadmap] = useState(null);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [rewriting, setRewriting] = useState(false);
+  const [uploadingIdx, setUploadingIdx] = useState(null);
+  const [form, setForm] = useState({ description: "", link: "", images: [] });
 
   const load = async () => {
-    const r = await base44.entities.Roadmap.filter({ status: "active" }, "-created_date", 1);
-    if (r.length) setRoadmap(r[0]);
     const p = await base44.entities.Project.filter({}, "-created_date", 50);
     setProjects(p);
     setLoading(false);
   };
   useEffect(() => { load(); }, []);
 
-  const suggestions = (roadmap?.nodes || []).filter((n) => n.projects?.length).flatMap((n) => (n.projects || []).map((p, i) => ({ title: p, node: n, key: n.id + i })));
-
-  const addProject = async (title, node) => {
-    await base44.entities.Project.create({
-      title, goal: profile?.goal, description: node.objective,
-      requirements: node.skills || [], technologies: node.skills || [],
-      milestones: node.tasks || [], difficulty: "beginner", status: "in_progress"
-    });
-    await base44.entities.Notification.create({ type: "project", title: isAr ? "مشروع جديد! 🚀" : "New project! 🚀", body: isAr ? `بدأت "${title}"` : `You started "${title}"` });
-    load();
+  const resetForm = () => {
+    setForm({ description: "", link: "", images: [] });
+    setShowForm(false);
   };
 
-  const cycle = async (p) => {
-    const next = p.status === "suggested" ? "in_progress" : p.status === "in_progress" ? "completed" : "suggested";
-    await base44.entities.Project.update(p.id, { status: next });
+  const rewrite = async () => {
+    if (!form.description.trim()) return;
+    setRewriting(true);
+    try {
+      const res = await base44.functions.invoke("rewriteProjectDescription", { description: form.description, lang });
+      const data = res.data || res;
+      if (data.description) setForm({ ...form, description: data.description });
+    } catch {}
+    setRewriting(false);
+  };
+
+  const uploadImage = async (file, slot) => {
+    setUploadingIdx(slot);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadPublicFile({ file });
+      const imgs = [...form.images];
+      imgs[slot] = file_url;
+      setForm({ ...form, images: imgs });
+    } catch {}
+    setUploadingIdx(null);
+  };
+
+  const save = async () => {
+    if (!form.description.trim()) return;
+    setSaving(true);
+    try {
+      const title = form.description.trim().split("\n")[0].slice(0, 80) || (isAr ? "مشروعي" : "My Project");
+      await base44.entities.Project.create({
+        title,
+        goal: profile?.goal || "",
+        description: form.description.trim(),
+        link: form.link.trim(),
+        images: form.images.filter(Boolean),
+        status: "completed"
+      });
+      resetForm();
+      load();
+    } catch {}
+    setSaving(false);
+  };
+
+  const remove = async (id) => {
+    await base44.entities.Project.delete(id);
     load();
   };
 
@@ -43,48 +79,116 @@ export default function Projects() {
 
   return (
     <div dir={dir} className="space-y-6">
-      <div>
-        <h1 className="font-heading font-extrabold text-2xl sm:text-3xl flex items-center gap-2"><Rocket className="text-zeus-gold" style={{ width: 28, height: 28 }} /> {t("projects.title")}</h1>
-        <p className="text-muted-foreground mt-1">{isAr ? "مشاريع عملية تثبت مهاراتك" : "Hands-on projects that prove your skills"}</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="font-heading font-extrabold text-2xl sm:text-3xl">{t("projects.title")}</h1>
+          <p className="text-muted-foreground mt-1 text-sm">{isAr ? "شارك مشاريعك الحقيقية" : "Share your real projects"}</p>
+        </div>
+        {!showForm && (
+          <button onClick={() => setShowForm(true)} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-zeus-gold text-zeus-midnight font-semibold text-sm hover:bg-zeus-brightgold transition shadow-gold-sm">
+            <Plus style={{ width: 18, height: 18 }} /> {isAr ? "إضافة مشروع" : "Add Project"}
+          </button>
+        )}
       </div>
 
-      {projects.length > 0 && (
-        <div>
-          <h2 className="text-sm font-semibold text-zeus-brightgold mb-3">{isAr ? "مشاريعي" : "My Projects"}</h2>
-          <div className="grid sm:grid-cols-2 gap-4">
-            {projects.map((p) => (
-              <div key={p.id} className="zeus-glass p-5">
-                <div className="flex items-start justify-between gap-2">
-                  <h3 className="font-heading font-bold">{p.title}</h3>
-                  <button onClick={() => cycle(p)} className="shrink-0">
-                    {p.status === "completed" ? <CheckCircle2 className="text-zeus-gold" style={{ width: 22, height: 22 }} /> : <Circle className="text-muted-foreground/40" style={{ width: 22, height: 22 }} />}
-                  </button>
-                </div>
-                <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{p.description}</p>
-                {p.technologies?.length > 0 && <div className="flex flex-wrap gap-1.5 mt-3">{p.technologies.map((s) => <span key={s} className="px-2 py-0.5 rounded-full bg-zeus-gold/10 text-zeus-brightgold text-[11px]">{s}</span>)}</div>}
-                <div className="mt-3 text-xs text-muted-foreground">{p.status === "completed" ? (isAr ? "مكتمل ✓" : "Completed ✓") : p.status === "in_progress" ? (isAr ? "قيد التنفيذ" : "In progress") : (isAr ? "مقترح" : "Suggested")}</div>
-              </div>
-            ))}
+      {showForm && (
+        <div className="zeus-glass p-5 space-y-4 animate-fade-up">
+          <div className="flex items-center justify-between">
+            <h3 className="font-heading font-bold text-sm">{isAr ? "مشروع جديد" : "New Project"}</h3>
+            <button onClick={resetForm} className="text-muted-foreground hover:text-foreground"><X style={{ width: 18, height: 18 }} /></button>
           </div>
+
+          {/* Description with AI rewrite */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs font-semibold text-muted-foreground">{isAr ? "وصف مشروعك" : "Describe your project"}</label>
+              <button onClick={rewrite} disabled={rewriting || !form.description.trim()}
+                className="inline-flex items-center gap-1 text-xs text-zeus-brightgold hover:text-zeus-gold disabled:opacity-50">
+                {rewriting ? <Loader2 className="animate-spin" style={{ width: 13, height: 13 }} /> : <Wand2 style={{ width: 13, height: 13 }} />}
+                {isAr ? "إعادة صياغة بالـ AI" : "Rewrite with AI"}
+              </button>
+            </div>
+            <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={4}
+              placeholder={isAr ? "اكتب وصف مشروعك... إيه بيعمل، التقنيات المستخدمة، والمميزات..." : "Describe your project... what it does, technologies used, features..."}
+              className="w-full rounded-xl bg-secondary/30 border border-border/60 px-3.5 py-3 text-sm focus:outline-none focus:zeus-gold-border resize-none" />
+          </div>
+
+          {/* Link */}
+          <div>
+            <label className="text-xs font-semibold text-muted-foreground block mb-1.5">{isAr ? "رابط المشروع" : "Project Link"}</label>
+            <input value={form.link} onChange={(e) => setForm({ ...form, link: e.target.value })}
+              placeholder={isAr ? "https://..." : "https://..."}
+              className="w-full rounded-xl bg-secondary/30 border border-border/60 px-3.5 py-3 text-sm focus:outline-none focus:zeus-gold-border" />
+          </div>
+
+          {/* 3 Images */}
+          <div>
+            <label className="text-xs font-semibold text-muted-foreground block mb-1.5">{isAr ? "صور المشروع (3 صور)" : "Project Images (3 images)"}</label>
+            <div className="grid grid-cols-3 gap-3">
+              {[0, 1, 2].map((slot) => (
+                <label key={slot} className="aspect-square rounded-xl border-2 border-dashed border-border/60 bg-secondary/20 flex items-center justify-center cursor-pointer hover:border-zeus-gold/40 transition overflow-hidden relative">
+                  {form.images[slot] ? (
+                    <>
+                      <img src={form.images[slot]} alt="" className="w-full h-full object-cover" />
+                      <button type="button" onClick={(e) => { e.preventDefault(); const imgs = [...form.images]; imgs[slot] = null; setForm({ ...form, images: imgs }); }}
+                        className="absolute top-1 end-1 w-6 h-6 rounded-full bg-black/60 flex items-center justify-center text-white hover:bg-black/80">
+                        <X style={{ width: 12, height: 12 }} />
+                      </button>
+                    </>
+                  ) : uploadingIdx === slot ? (
+                    <Loader2 className="text-zeus-gold animate-spin" style={{ width: 20, height: 20 }} />
+                  ) : (
+                    <div className="text-center text-muted-foreground">
+                      <ImageIcon style={{ width: 20, height: 20 }} className="mx-auto mb-1 opacity-50" />
+                      <span className="text-[10px]">{isAr ? "رفع" : "Upload"}</span>
+                    </div>
+                  )}
+                  <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files[0] && uploadImage(e.target.files[0], slot)} />
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <button onClick={save} disabled={saving || !form.description.trim()}
+            className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-zeus-gold text-zeus-midnight font-semibold text-sm hover:bg-zeus-brightgold transition shadow-gold disabled:opacity-50">
+            {saving ? <Loader2 className="animate-spin" style={{ width: 16, height: 16 }} /> : <Plus style={{ width: 16, height: 16 }} />}
+            {isAr ? "حفظ المشروع" : "Save Project"}
+          </button>
         </div>
       )}
 
-      {suggestions.length > 0 && (
-        <div>
-          <h2 className="text-sm font-semibold text-muted-foreground mb-3 flex items-center gap-1.5"><Wrench style={{ width: 14, height: 14 }} /> {isAr ? "مقترحات من خريطتك" : "Suggested from your roadmap"}</h2>
-          <div className="grid sm:grid-cols-2 gap-4">
-            {suggestions.map((s) => {
-              const exists = projects.some((p) => p.title === s.title);
-              return (
-                <div key={s.key} className="zeus-glass p-5 flex flex-col">
-                  <div className="text-xs text-zeus-gold mb-1">{s.node.title}</div>
-                  <h3 className="font-medium">{s.title}</h3>
-                  {exists ? <span className="text-xs text-muted-foreground mt-3">{isAr ? "أضفته لمشاريعك" : "Added to your projects"}</span> :
-                    <button onClick={() => addProject(s.title, s.node)} className="mt-3 self-start inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-zeus-gold/40 text-zeus-brightgold text-xs font-medium hover:bg-zeus-gold/10 transition"><Plus style={{ width: 12, height: 12 }} /> {isAr ? "أضف لمشاريعي" : "Add to my projects"}</button>}
+      {/* Projects grid */}
+      {projects.length > 0 ? (
+        <div className="grid sm:grid-cols-2 gap-4">
+          {projects.map((p) => (
+            <div key={p.id} className="zeus-glass overflow-hidden group">
+              {p.images?.[0] && (
+                <div className="aspect-video overflow-hidden">
+                  <Image src={p.images[0]} alt={p.title} fittingType="fill" className="w-full h-full group-hover:scale-105 transition duration-500" />
                 </div>
-              );
-            })}
-          </div>
+              )}
+              <div className="p-4">
+                <div className="flex items-start justify-between gap-2 mb-1">
+                  <h3 className="font-heading font-bold text-sm line-clamp-1">{p.title}</h3>
+                  <button onClick={() => remove(p.id)} className="text-muted-foreground hover:text-destructive shrink-0"><Trash2 style={{ width: 14, height: 14 }} /></button>
+                </div>
+                <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{p.description}</p>
+                {p.link && (
+                  <a href={p.link} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-zeus-gold hover:underline mt-2">
+                    <ExternalLink style={{ width: 12, height: 12 }} /> {isAr ? "فتح المشروع" : "Open project"}
+                  </a>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : !showForm && (
+        <div className="zeus-glass p-12 text-center">
+          <ImageIcon className="text-muted-foreground/30 mx-auto mb-4" style={{ width: 40, height: 40 }} />
+          <p className="text-muted-foreground text-sm mb-4">{isAr ? "لسه مفيش مشاريع. أضف أول مشروع ليك!" : "No projects yet. Add your first project!"}</p>
+          <button onClick={() => setShowForm(true)} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-zeus-gold text-zeus-midnight font-semibold text-sm hover:bg-zeus-brightgold transition shadow-gold">
+            <Plus style={{ width: 16, height: 16 }} /> {isAr ? "إضافة مشروع" : "Add Project"}
+          </button>
         </div>
       )}
     </div>
