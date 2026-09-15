@@ -22,7 +22,7 @@ Reply in ${lang === 'en' ? 'English' : 'Egyptian Arabic'}.`;
 
     const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
       prompt,
-      model: 'gpt_5_mini',
+      model: 'automatic',
       response_json_schema: {
         type: 'object',
         properties: {

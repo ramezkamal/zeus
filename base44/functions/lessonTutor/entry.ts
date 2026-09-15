@@ -66,7 +66,7 @@ Reply in ${lang === 'ar' ? 'natural Egyptian Arabic' : 'English'}.`;
 
     const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
       prompt,
-      model: 'gpt_5_4',
+      model: 'automatic',
       response_json_schema: {
         type: 'object',
         properties: {

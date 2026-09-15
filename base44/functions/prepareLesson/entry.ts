@@ -91,7 +91,7 @@ Output as JSON matching the schema.`;
 
       const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
         prompt,
-        model: 'claude-sonnet-5',
+        model: 'automatic',
         response_json_schema: {
           type: 'object',
           properties: {
@@ -211,7 +211,7 @@ Output as JSON matching the schema.`;
 
     const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
       prompt,
-      model: 'claude-sonnet-5',
+      model: 'automatic',
       response_json_schema: {
         type: 'object',
         properties: {
