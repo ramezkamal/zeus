@@ -12,9 +12,11 @@ import ProductPreview from "@/components/landing/ProductPreview";
 import WhyTrust from "@/components/landing/WhyTrust";
 import FinalCTAFooter from "@/components/landing/FinalCTAFooter";
 import PartnerDialog from "@/components/landing/PartnerDialog";
+import useL from "@/components/landing/useL";
 
 export default function Landing() {
   const nav = useNavigate();
+  const { dir } = useL();
   const [partner, setPartner] = useState({ open: false, type: "general" });
 
   useEffect(() => {
@@ -29,7 +31,7 @@ export default function Landing() {
   const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 
   return (
-    <div dir="ltr" className="min-h-screen overflow-x-hidden">
+    <div dir={dir} className="min-h-screen overflow-x-hidden">
       <LandingNav onStart={start} onPartner={() => openPartner()} scrollTo={scrollTo} />
       <Hero onStart={start} onPartner={() => openPartner()} />
       <PartnerMarquee />

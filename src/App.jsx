@@ -38,6 +38,7 @@ import Notifications from '@/pages/Notifications';
 import Profile from '@/pages/Profile';
 import Settings from '@/pages/Settings';
 import PublicPortfolio from '@/pages/PublicPortfolio';
+import AdminPartnerships from '@/pages/AdminPartnerships';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -88,6 +89,7 @@ const AuthenticatedApp = () => {
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/admin/partnerships" element={<AdminPartnerships />} />
         </Route>
       </Route>
 

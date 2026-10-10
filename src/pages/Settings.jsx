@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Settings as SettingsIcon, Globe, MessageSquare, LogOut, Check, Loader2, User, Palette, Camera, Mic, Upload } from "lucide-react";
+import { Settings as SettingsIcon, Globe, MessageSquare, LogOut, Check, Loader2, User, Palette, Camera, Mic, Upload, Handshake } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useI18n } from "@/lib/i18n";
 import { useProfile } from "@/lib/ProfileContext";
@@ -18,6 +18,9 @@ export default function Settings() {
   const [theme, setTheme] = useState(() => localStorage.getItem("zeus_theme") || "dark");
   const [cv, setCv] = useState(null);
   const [uploading, setUploading] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => { base44.auth.me().then((u) => setIsAdmin(u?.role === "admin")); }, []);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
@@ -107,6 +110,14 @@ export default function Settings() {
           </button>
         </div>
       </div>
+
+      {isAdmin && (
+        <Link to="/admin/partnerships" className="zeus-glass p-5 flex items-center gap-3 hover:zeus-gold-border transition">
+          <Handshake className="text-zeus-gold" style={{ width: 18, height: 18 }} />
+          <span className="text-sm font-medium flex-1">{isAr ? "طلبات الشراكة (أدمن)" : "Partnership Requests (Admin)"}</span>
+          <span className="text-xs text-muted-foreground">{isAr ? "عرض" : "View"}</span>
+        </Link>
+      )}
 
       <Link to="/profile" className="zeus-glass p-5 flex items-center gap-3 hover:zeus-gold-border transition">
         <User className="text-zeus-gold" style={{ width: 18, height: 18 }} />

@@ -1,29 +1,30 @@
 import React from "react";
 import { User, Compass, ListChecks, TrendingUp, Hammer, ShieldCheck, Lock, Eye, SlidersHorizontal, Scale, RefreshCw } from "lucide-react";
 import SectionHead from "@/components/landing/SectionHead";
-
-const WHY = [
-  { icon: User, t: "Learner-first personalization" },
-  { icon: Compass, t: "Learning connected to career direction" },
-  { icon: ListChecks, t: "Structured next steps" },
-  { icon: TrendingUp, t: "Progress-informed recommendations" },
-  { icon: Hammer, t: "Practical skill development" },
-  { icon: ShieldCheck, t: "Responsible AI principles" }
-];
-const TRUST = [
-  { icon: Lock, t: "Privacy-conscious design", d: "Your learning data is private to your account by default." },
-  { icon: Eye, t: "Transparent recommendations", d: "Career paths come with the reasons they fit you." },
-  { icon: SlidersHorizontal, t: "You stay in control", d: "Edit your profile and change your goals at any time." },
-  { icon: Scale, t: "Fairness by intent", d: "Guidance supports decisions — it doesn't make them for you." },
-  { icon: RefreshCw, t: "Continuous improvement", d: "The product evolves based on learner feedback." }
-];
+import useL from "@/components/landing/useL";
 
 export default function WhyTrust() {
+  const { L } = useL();
+  const WHY = [
+    { icon: User, t: L("Learner-first personalization", "تخصيص بيبدأ منك") },
+    { icon: Compass, t: L("Learning connected to career direction", "تعلّم مربوط بمسارك المهني") },
+    { icon: ListChecks, t: L("Structured next steps", "خطوات جاية واضحة") },
+    { icon: TrendingUp, t: L("Progress-informed recommendations", "توصيات مبنية على تقدّمك") },
+    { icon: Hammer, t: L("Practical skill development", "تطوير مهارات عملي") },
+    { icon: ShieldCheck, t: L("Responsible AI principles", "ذكاء اصطناعي مسؤول") }
+  ];
+  const TRUST = [
+    { icon: Lock, t: L("Privacy-conscious design", "تصميم يحترم الخصوصية"), d: L("Your learning data is private to your account by default.", "بياناتك خاصة بحسابك بشكل افتراضي.") },
+    { icon: Eye, t: L("Transparent recommendations", "توصيات شفافة"), d: L("Career paths come with the reasons they fit you.", "كل مسار مهني بييجي معاه سبب إنه مناسب ليك.") },
+    { icon: SlidersHorizontal, t: L("You stay in control", "إنت المتحكم"), d: L("Edit your profile and change your goals at any time.", "عدّل ملفك وغيّر أهدافك في أي وقت.") },
+    { icon: Scale, t: L("Fairness by intent", "عدالة مقصودة"), d: L("Guidance supports decisions — it doesn't make them for you.", "التوجيه بيساعدك تقرر — مش بيقرر بدالك.") },
+    { icon: RefreshCw, t: L("Continuous improvement", "تطوير مستمر"), d: L("The product evolves based on learner feedback.", "المنتج بيتطوّر من آراء المتعلّمين.") }
+  ];
   return (
     <>
       <section id="why" className="py-24 border-t border-border/40">
         <div className="max-w-6xl mx-auto px-5">
-          <SectionHead eyebrow="Why ZEUS" title="More Than Content. A Clearer Way Forward." desc="An early-stage Egyptian EdTech initiative with a working platform tested by university students." />
+          <SectionHead eyebrow={L("Why ZEUS", "ليه زيوس")} title={L("More Than Content. A Clearer Way Forward.", "أكتر من محتوى. طريق أوضح لقدّام.")} desc={L("An early-stage Egyptian EdTech initiative with a working platform tested by university students.", "مبادرة EdTech مصرية في مرحلتها الأولى، بمنصة شغّالة جرّبها طلاب جامعات.")} />
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
             {WHY.map(({ icon: Icon, t }) => (
               <div key={t} className="flex items-center gap-3 p-5 rounded-xl border border-border/40">
@@ -35,7 +36,7 @@ export default function WhyTrust() {
       </section>
       <section className="py-24 border-t border-border/40 bg-card/20">
         <div className="max-w-6xl mx-auto px-5">
-          <SectionHead eyebrow="Trust & Responsible AI" title="AI that informs, never decides for you." />
+          <SectionHead eyebrow={L("Trust & Responsible AI", "الثقة والذكاء الاصطناعي المسؤول")} title={L("AI that informs, never decides for you.", "ذكاء اصطناعي بيوضّحلك، مش بيقرر بدالك.")} />
           <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-6">
             {TRUST.map(({ icon: Icon, t, d }) => (
               <div key={t}>
