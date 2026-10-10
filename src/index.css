@@ -132,6 +132,15 @@
 @keyframes pulseSoft { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
 @keyframes typing { from { width: 0; } to { width: 100%; } }
 
+/* Partner marquee */
+.zeus-marquee { animation: zeusMarquee 45s linear infinite; }
+.zeus-marquee-reverse { animation-direction: reverse; }
+.group\/row:hover .zeus-marquee { animation-play-state: paused; }
+@keyframes zeusMarquee { from { transform: translateX(0); } to { transform: translateX(calc(-50% - 6px)); } }
+@media (prefers-reduced-motion: reduce) {
+  .zeus-marquee { animation: none; flex-wrap: wrap; width: auto; justify-content: center; }
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
