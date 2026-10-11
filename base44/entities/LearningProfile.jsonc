@@ -130,6 +130,41 @@
         }
       }
     },
+    "dna_version": {
+      "type": "number",
+      "default": 1
+    },
+    "dna_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "number"
+          },
+          "date": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "skill_graph": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "skill": {
+                  "type": "string"
+                },
+                "level": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "goal_recommendations": {
       "type": "array",
       "items": {

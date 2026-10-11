@@ -28,11 +28,12 @@ export default function Lesson() {
   const [tutorOpen, setTutorOpen] = useState(false);
   const [tutorMessages, setTutorMessages] = useState([]);
   const [tutorTyping, setTutorTyping] = useState(false);
+  const [remedialId, setRemedialId] = useState(null);
 
   useEffect(() => {
     (async () => {
       setLoading(true);
-      setQuizState("idle"); setAnswers({}); setResult(null); setNextLessonId(null); setTutorMessages([]);
+      setQuizState("idle"); setAnswers({}); setResult(null); setNextLessonId(null); setTutorMessages([]); setRemedialId(null);
       try {
         const l = await base44.entities.Lesson.get(lessonId);
         setLesson(l);
@@ -64,6 +65,15 @@ export default function Lesson() {
     const passed = score >= 70;
     setResult({ score, passed, correct, total: quiz.length });
     setQuizState("submitted");
+    const missed = quiz.filter((q, i) => answers[i] !== q.correct).map(q => q.question);
+    base44.functions.invoke("recordQuizResult", { lessonId, score, missed })
+      .then((res) => { const d = res.data || {}; if (d.remedialLessonId) setRemedialId(d.remedialLessonId); })
+      .catch(() => {});
+    if (passed && lesson.is_remedial) {
+      await base44.entities.Lesson.update(lessonId, { status: "completed", quiz_passed: true, quiz_score: score, completed_date: new Date().toISOString().slice(0, 10) });
+      setNextLessonId(lesson.remedial_for);
+      return;
+    }
     if (passed && !lesson.quiz_passed) {
       try {
         await base44.entities.Lesson.update(lessonId, { status: "completed", quiz_passed: true, quiz_score: score, completed_date: new Date().toISOString().slice(0, 10) });
@@ -187,6 +197,14 @@ export default function Lesson() {
           <QuizPanel quiz={lesson.quiz || []} state={quizState} answers={answers} setAnswers={setAnswers} result={result}
             onStart={() => setQuizState("taking")} onSubmit={submitQuiz} onRetry={retryQuiz}
             onNext={() => nextLessonId ? nav(`/lesson/${nextLessonId}`) : nav("/schedule")} hasNext={!!nextLessonId} isAr={isAr} />
+
+          {remedialId && quizState === "submitted" && !result?.passed && (
+            <button onClick={() => nav(`/lesson/${remedialId}`)} className="w-full zeus-glass zeus-gold-border p-4 flex items-center gap-3 text-start">
+              <Brain className="text-zeus-gold shrink-0" style={{ width: 20, height: 20 }} />
+              <span className="flex-1 text-sm">{isAr ? "جهّزتلك درس مراجعة مركّز على النقط اللي غلطت فيها. ابدأه قبل ما تعيد الكويز." : "I prepared a focused review lesson on the points you missed. Take it before retrying."}</span>
+              <Arrow className="text-zeus-gold" style={{ width: 18, height: 18 }} />
+            </button>
+          )}
 
           {lesson.task && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="zeus-glass p-5">

@@ -176,7 +176,7 @@ LESSON: ${node.title}
 OBJECTIVE: ${node.objective || ''}
 SKILLS: ${(node.skills || []).join(', ')}
 LEARNER LEVEL: ${level}
-
+${lesson.is_remedial ? `\nTHIS IS A REMEDIAL REVIEW LESSON. The learner failed the quiz twice. Re-explain the topic from a different angle, simpler, with more examples, and focus especially on these points they got wrong: ${lesson.remedial_focus || 'core concepts'}. Keep reading_content 600-1200 words and quiz 10 questions.\n` : ''}
 Generate:
 1. "summary": A lesson summary (2-3 sentences) telling the learner what they'll learn and what they'll be able to do after. ${lang === 'ar' ? 'In Egyptian Arabic.' : 'In English.'}
 
