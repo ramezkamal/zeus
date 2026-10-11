@@ -123,6 +123,61 @@
         }
       }
     },
+    "assessment": {
+      "type": "object",
+      "properties": {
+        "submission": {
+          "type": "string"
+        },
+        "link": {
+          "type": "string"
+        },
+        "overall": {
+          "type": "number"
+        },
+        "decision": {
+          "type": "string"
+        },
+        "criteria": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "score": {
+                "type": "number"
+              },
+              "feedback": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "strengths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "gaps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "next_steps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "date": {
+          "type": "string"
+        }
+      }
+    },
     "video_url": {
       "type": "string"
     },

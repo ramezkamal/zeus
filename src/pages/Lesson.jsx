@@ -8,6 +8,7 @@ import VideoPlayer from "@/components/zeus/lesson/VideoPlayer";
 import ReadingView from "@/components/zeus/lesson/ReadingView";
 import QuizPanel from "@/components/zeus/lesson/QuizPanel";
 import TutorSheet from "@/components/zeus/lesson/TutorSheet";
+import ProjectAssessment from "@/components/zeus/lesson/ProjectAssessment";
 
 export default function Lesson() {
   const { lessonId } = useParams();
@@ -197,6 +198,8 @@ export default function Lesson() {
           <QuizPanel quiz={lesson.quiz || []} state={quizState} answers={answers} setAnswers={setAnswers} result={result}
             onStart={() => setQuizState("taking")} onSubmit={submitQuiz} onRetry={retryQuiz}
             onNext={() => nextLessonId ? nav(`/lesson/${nextLessonId}`) : nav("/schedule")} hasNext={!!nextLessonId} isAr={isAr} />
+
+          {isStageProject && <ProjectAssessment lesson={lesson} isAr={isAr} lang={lang} onAdvance={setNextLessonId} />}
 
           {remedialId && quizState === "submitted" && !result?.passed && (
             <button onClick={() => nav(`/lesson/${remedialId}`)} className="w-full zeus-glass zeus-gold-border p-4 flex items-center gap-3 text-start">
