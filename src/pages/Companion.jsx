@@ -73,7 +73,7 @@ export default function Companion() {
           <p className="text-xs text-muted-foreground">{isAr ? "رفيقك في التعلّم — فاهم خريطتك ومهامك" : "Your learning companion — knows your roadmap & tasks"}</p>
         </div>
       </div>
-      <div className="zeus-glass p-5 h-[65vh] flex flex-col">
+      <div className="zeus-glass p-3 sm:p-5 h-[calc(100dvh-15rem)] sm:h-[65vh] min-h-[22rem] flex flex-col">
         <ChatPanel messages={messages} onSend={send} typing={typing} placeholder={t("companion.placeholder")} companionName={profile?.companion_name} t={t} lang={lang} />
       </div>
     </div>

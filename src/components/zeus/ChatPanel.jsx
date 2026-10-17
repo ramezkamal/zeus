@@ -81,7 +81,7 @@ export default function ChatPanel({ messages, onSend, typing, placeholder, compa
                 <img src="https://media.base44.com/images/public/6a8c28083b820a6f17848b0c/d926a568e_image-removebg-preview1.png" alt="Zeus" className="w-full h-full object-cover object-top" />
               </div>
             )}
-            <div className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
+            <div className={`max-w-[82%] min-w-0 px-3.5 sm:px-4 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap break-words ${
               m.role === "user"
                 ? "bg-zeus-gold text-zeus-midnight rounded-ee-sm font-medium"
                 : "bg-card border border-border/60 rounded-es-sm"
@@ -105,28 +105,28 @@ export default function ChatPanel({ messages, onSend, typing, placeholder, compa
         <div ref={endRef} />
       </div>
 
-      <form onSubmit={submit} className="mt-3 flex items-center gap-2">
+      <form onSubmit={submit} className="mt-3 flex items-center gap-1.5 sm:gap-2 w-full">
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder={listening ? (lang === "ar" ? "بتسمع..." : "Listening...") : placeholder}
-          className="flex-1 px-4 py-3 rounded-full bg-card border border-border/60 focus:zeus-gold-border outline-none text-sm transition"
+          className="flex-1 min-w-0 px-3 sm:px-4 py-2.5 sm:py-3 rounded-full bg-card border border-border/60 focus:zeus-gold-border outline-none text-sm transition"
         />
         <button type="button" onClick={toggleSpeak}
-          className={`w-11 h-11 shrink-0 rounded-full flex items-center justify-center transition ${
+          className={`w-9 h-9 sm:w-11 sm:h-11 shrink-0 rounded-full flex items-center justify-center transition ${
             speakEnabled ? "bg-zeus-gold/20 text-zeus-gold border border-zeus-gold/50" : "bg-card border border-border/60 text-muted-foreground hover:text-zeus-gold"
           }`}
           title={lang === "ar" ? "رد صوتي" : "Voice replies"}>
           {speakEnabled ? <Volume2 style={{ width: 18, height: 18 }} /> : <VolumeX style={{ width: 18, height: 18 }} />}
         </button>
         <button type="button" onClick={listening ? stopListening : startListening}
-          className={`w-11 h-11 shrink-0 rounded-full flex items-center justify-center transition ${
+          className={`w-9 h-9 sm:w-11 sm:h-11 shrink-0 rounded-full flex items-center justify-center transition ${
             listening ? "bg-red-500 text-white animate-pulse" : "bg-card border border-border/60 text-muted-foreground hover:text-zeus-gold"
           }`}
           title={lang === "ar" ? "تحدث" : "Voice input"}>
           {listening ? <MicOff style={{ width: 18, height: 18 }} /> : <Mic style={{ width: 18, height: 18 }} />}
         </button>
-        <button type="submit" disabled={typing || !text.trim()} className="w-11 h-11 shrink-0 rounded-full bg-zeus-gold text-zeus-midnight flex items-center justify-center hover:bg-zeus-brightgold transition disabled:opacity-40 shadow-gold-sm">
+        <button type="submit" disabled={typing || !text.trim()} className="w-9 h-9 sm:w-11 sm:h-11 shrink-0 rounded-full bg-zeus-gold text-zeus-midnight flex items-center justify-center hover:bg-zeus-brightgold transition disabled:opacity-40 shadow-gold-sm">
           <Send style={{ width: 18, height: 18 }} />
         </button>
       </form>
